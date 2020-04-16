@@ -1,0 +1,185 @@
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-header">
+				<h3 class="box-title">角色管理</h3>
+				<div class="box-tools">
+					<div class="input-group input-group-sm" style="width: 350px;">
+						<input type="text" name="table_search" id="searchNameId"
+							class="form-control pull-right" placeholder="角色名">
+
+						<div class="input-group-btn">
+							<button type="button" class="btn btn-default btn-search">
+                                <i class="fa fa-search"></i>
+							</button>
+							<button type="button" class="btn btn-default btn-add">添加</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body table-responsive no-padding">
+				<form>
+				  <table class="table table-hover">
+					<thead>
+						<tr>
+						    <th>序号</th>
+							<th>角色名称</th>
+							<th>备注</th>
+							<th>创建时间</th>
+							<th>修改时间</th>
+							<th>创建用户</th>
+							<th>修改用户</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="tbodyId">
+					</tbody>
+				  </table>
+				</form>
+			</div>
+			<!-- /.box-body -->
+			<div id="pageId" class="box-footer clearfix">
+            </div>
+		</div>
+		<!-- /.box -->
+	</div>
+</div>
+<script type="text/javascript">
+   $(function(){   
+	  $("#pageId").load("doPageUI",function(){
+		  doGetObjects();
+	  });
+	  $(".input-group-btn")
+	  .on("click",".btn-search",doQueryObjects)
+	  .on("click",".btn-add",doLoadEditUI)
+	  $("#tbodyId")
+	  .on("click",".btn-delete",doDeleteObject)
+	  .on("click",".btn-update",doLoadEditUI) 
+   });
+   function doLoadEditUI(){
+	   var title;
+	   if($(this).hasClass('btn-add')){
+		   title="添加角色";
+		   doLoadPageUI(title);
+	   }else{
+		   title="修改角色"
+		   var id=$(this).parents("tr").data("id");
+		   var params={"id":id};
+		   var url="role/doFindObjectById";
+		   $.getJSON(url,params,function(result){
+			   if(result.state==1){
+				  result.data.id=id;//在结果中动态追加id
+				  $("#mainContentId").data("data",result.data);
+				  doLoadPageUI(title);//异步加载页面  
+			   }else{
+				  alert(result.message); 
+			   }
+		   });
+	   }
+   }
+   function doLoadPageUI(title){
+	   var url="role/role_edit"
+	   $("#mainContentId")
+	   .load(url,function(){
+		   $(".box-title").html(title);
+	   })
+   }
+   function doDeleteObject(){
+	   //1.params
+	   var id=$(this).parents("tr").data("id");
+	   var params={"id":id};
+	   //2.url
+	   var url="role/doDeleteObject"
+	   //3.ajax request
+	   $.post(url,params,function(result){
+		   if(result.state==1){
+			   alert(result.message);
+			   doGetObjects();
+		   }else{
+			   alert(result.message);
+		   }
+	   })
+	   
+   }
+   function doQueryObjects(){
+	   $("#pageId").data("pageCurrent",1);
+	   doGetObjects();
+   }
+   function doGetObjects(){
+	   debugger
+	   //1.params
+	   //获取在Page.html中绑定的当前页码值
+	   var pageCurrent=$("#pageId").data("pageCurrent");
+	   //假如没有值,设置初始值为1
+	   if(!pageCurrent)pageCurrent=1;
+	   //var params="pageCurrrent="+pageCurrent;
+	   var params={"pageCurrent":pageCurrent};
+	   //获取查询时用户输入的名字
+	   var name=$("#searchNameId").val();
+	   if(name)params.name=name;
+	   //2.url
+	   var url="role/doFindPageObjects";
+	   //3.ajax request
+	   console.log(params);
+	   $.getJSON(url,params,function(result){
+		   doHandleResponseResult(result);
+	   });
+   }
+   function doHandleResponseResult(result){
+	   
+	   if(result.state==1){
+		  doSetTableBodyRows(result.data.records);
+		  doSetPagination(result.data);//page.html
+	   }else{
+		  doSetTableBodyErrors(result.message);
+	   }
+   }
+   function doSetTableBodyErrors(message){
+	   //获取body对象并清空
+	   var tBody=$("#tbodyId");
+	   tBody.empty();
+	   //创建tr对象
+	   var tr=$("<tr></tr>");
+	   //创建td对象
+	   //var len=$("table thead").find("tr").find("th").length;
+	   var len=$("table th").length;
+	   var td=$("<td></td>");
+	   td.prop("colspan",len);
+	   td.append(message);
+	   tr.append(td);
+	   //将tr追加到tbody
+	   tBody.append(tr);
+   }
+   function doSetTableBodyRows(records){
+	   
+	  //获取tbody对象,并清空
+	   var tBody=$("#tbodyId");
+	   tBody.empty();
+	   //2.迭代数据,并追加到tBody
+	   for(var i in records){
+		  //2.1构建tr对象
+		  var tr=$("<tr></tr>");
+		  tr.data("id",records[i].id);
+		  //2.2构建tds对象
+		  var tds=doCreateTds(records[i],i);
+		  //2.3将tds对象追加到tr中
+		  tr.append(tds);
+		  //2.4将tr追加到tbody中
+		  tBody.append(tr);
+	   }
+   }
+   function doCreateTds(row,i){
+	   var tds=
+       "<td>"+(parseInt(i)+1)+"</td>"+
+	   "<td>"+row.name+"</td>"+
+       "<td>"+row.note+"</td>"+
+       "<td>"+new Date(row.createdTime).toLocaleString()+"</td>"+
+       "<td>"+new Date(row.modifiedTime).toLocaleString()+"</td>"+
+       "<td>"+row.createdUser+"</td>"+
+       "<td>"+row.modifiedUser+"</td>"+
+       "<td><a class='btn-delete'>delete</a>"+
+       "&nbsp;<a class='btn-update'>update</a></td>";
+       return tds;
+   }
+</script>

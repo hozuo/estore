@@ -1,0 +1,182 @@
+<!-- Horizontal Form -->
+ <div class="box box-info">
+      <div class="box-header with-border">
+        <h3 class="box-title">添加部门</h3>
+      </div>
+      <!-- /.box-header -->
+      <!-- form start -->
+      <form class="form-horizontal">
+        <div class="box-body">
+          <div class="form-group">
+            <label for="nameId" class="col-sm-2 control-label">部门名称</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control"  id="nameId" placeholder="名称">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="parentId" class="col-sm-2 control-label">上级部门</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control load-sys-dept" readonly="readonly" id="parentId" placeholder="上级部门">
+            </div>
+          </div>
+		  <div class="form-group">
+				<label for="sortId" class="col-sm-2 control-label">排序号：</label>
+				<div class="col-sm-10">
+					<input type="text" id="sortId" placeholder="排序号" class="form-control">
+				</div>
+		 </div>
+		   <div class="form-group">
+				<label for="noteId" class="col-sm-2 control-label">备注：</label>
+				<div class="col-sm-10">
+					<input type="text" id="noteId" placeholder="备注" class="form-control">
+				</div>
+		 </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+          <button type="button" class="btn btn-default btn-cancel">Cancel</button>
+          <button type="button" class="btn btn-info pull-right btn-save">Save</button>
+        </div>
+        <!-- /.box-footer -->
+      </form>
+      <div class="layui-layer layui-layer-page layui-layer-molv layer-anim" id="treeLayer" type="page" times="2" showtime="0" contype="object"
+		style="z-index:59891016; width: 300px; height: 450px; top: 100px; left: 500px; display:none">
+		<div class="layui-layer-title" style="cursor: move;">选择部门</div>
+		<div class="layui-layer-content" style="height: 358px;">
+			<div style="padding: 10px;" class="layui-layer-wrap">
+				<ul id="zTreeId" class="ztree"></ul>    <!-- 动态加载树 -->
+			</div>
+		</div>
+		<span class="layui-layer-setwin"> <a class="layui-layer-ico layui-layer-close layui-layer-close1 btn-cancel" ></a></span>
+		<div class="layui-layer-btn layui-layer-btn-">
+			<a class="layui-layer-btn0 btn-confirm">确定</a>
+			<a class="layui-layer-btn1 btn-cancel">取消</a>
+	     </div>
+   </div>
+      
+  </div>
+  <script type="text/javascript" src="bower_components/ztree/jquery.ztree.all.min.js"></script>
+  <script type="text/javascript" src="bower_components/layer/layer.js">
+  </script>
+ <script type="text/javascript">
+  var zTree; 
+  //初始化zTree时会用到
+  var setting = {
+  	data : {
+  		simpleData : {
+  			enable : true,
+  			idKey : "id",  //节点数据中保存唯一标识的属性名称
+  			pIdKey : "parentId",  //节点数据中保存其父节点唯一标识的属性名称
+  			rootPId : null  //根节点id
+  		}//json 格式javascript对象
+  	}
+  }//json 格式的javascript对象
+  
+  $(function(){
+	  $(".form-horizontal")
+	  .on("click",".load-sys-dept",doLoadZtreeNodes)
+
+	  
+	  $(".box-footer")
+	  .on("click",".btn-cancel",doCancel)
+	  .on("click",".btn-save",doSaveOrUpdate);
+	  
+	  $("#treeLayer")
+      .on("click",".btn-confirm",doSetSelectNode)
+      .on("click",".btn-cancel",doHideTree)
+
+	  var data=$("#mainContentId").data("rowData");
+	  if(data)doInitEditFormData(data);
+
+
+  });
+
+
+		function doInitEditFormData(data) {
+			$("#nameId").val(data.name);
+			$("#sortId").val(data.sort);
+			$("#noteId").val(data.note);
+			$("#parentId").val(data.parentName);
+			$("#parentId").data("parentId", data.parentId);
+		}
+
+		function doCancel() {
+			$("#mainContentId").load("dept/dept_list", function() {
+				$("#mainContentId").removeData();
+				$("#parentId").removeData();
+			})
+		}
+		
+		function doSaveOrUpdate() {
+			//1.获取表单数据
+			var params = doGetEditFormData();
+			var rowData = $("#mainContentId").data("rowData");
+			if (rowData)params.id = rowData.id;
+			//2.定义url
+			var insertUrl = "dept/doSaveObject";
+			var updateUrl = "dept/doUpdateObject";
+			var url = rowData ? updateUrl : insertUrl;
+			//3.异步提交数据
+			$.post(url, params, function(result) {
+				if (result.state == 1) {
+					alert(result.message);
+					doCancel();
+				} else {
+					alert(result.message);
+				}
+			});
+		}
+
+		function doGetEditFormData() {
+			var params = {
+				name : $("#nameId").val(),
+				sort : $("#sortId").val(),
+				note : $("#noteId").val(),
+				parentId : $("#parentId").data("parentId")
+			}
+			return params;
+		}
+
+		function doHideTree() {
+			$("#treeLayer").css("display", "none");
+		}
+		//确定按钮
+		function doSetSelectNode() {
+			//1.获取选中的节点对象
+			var nodes = zTree.getSelectedNodes();
+			if (nodes.length == 0)
+				return;
+			var node = nodes[0];
+			console.log(node);
+			//2.将对象中内容,填充到表单
+			$("#parentId").data("parentId", node.id);
+			$("#parentId").val(node.name);
+			//3.隐藏树对象
+			doHideTree();
+		}
+
+		function doLoadZtreeNodes() {
+			//显示div
+			$("#treeLayer").css("display", "block");
+			var url = "dept/doFindZtreeDeptNodes";
+			//异步加载数据,并初始化数据
+			$.getJSON(url, function(result) {
+				if (result.state == 1) {
+					//使用init函数需要先引入ztree对应的js文件
+					zTree = $.fn.zTree
+							.init($("#zTreeId"), setting, result.data);
+				} else {
+					alert(result.message);
+				}
+			})
+		}
+	</script>
+    
+    
+    
+    
+    
+    
+    
+    
+    
