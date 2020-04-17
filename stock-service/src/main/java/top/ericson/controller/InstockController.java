@@ -23,7 +23,6 @@ import top.ericson.service.InstockService;
 import top.ericson.service.ItemFeignService;
 import top.ericson.service.UserFeignService;
 import top.ericson.vo.JsonResult;
-import top.ericson.vo.PageObject;
 import top.ericson.vo.ResultCode;
 import top.ericson.vo.info.InstockInfo;
 
@@ -284,8 +283,8 @@ public class InstockController {
             info.setCreateUserStr(createUserStr);
             instockInfoList.add(info);
         }
-        return JsonResult.success(
-            new PageObject<InstockInfo>(page, pageSize, rowCount, (rowCount - 1) / pageSize + 1, instockInfoList));
+        // TODO 返回值
+        return JsonResult.success();
     }
 
 }

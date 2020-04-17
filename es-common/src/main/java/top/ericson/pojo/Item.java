@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import top.ericson.vo.info.ItemInfo;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -37,23 +36,5 @@ public class Item extends BasePojo {
     private Long salePrice;
 
     private String remark;
-
-    /**
-     * @date 2020/04/14
-     * @author Ericson
-     * @param itemInfo
-     * @description info构造pojo
-     */
-    public Item(ItemInfo itemInfo) {
-        itemId = itemInfo.getId();
-        name = itemInfo.getName();
-        itemSn = itemInfo.getSn();
-        catId = itemInfo.getCatId();
-        specId = itemInfo.getSpecId();
-        unitId = itemInfo.getUnitId();
-        buyPrice = itemInfo.getBuyprice();
-        salePrice = itemInfo.getSaleprice();
-        remark = itemInfo.getRemark();
-    }
 
 }

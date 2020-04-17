@@ -50,7 +50,7 @@ public class InstockInfo extends BaseInfo {
     // 入库数量
     private Long num;
     // 入库时间
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date inTime;
     // 实时库存(变动前)
@@ -88,9 +88,9 @@ public class InstockInfo extends BaseInfo {
      */
     public boolean cheak() {
         // true:任意对象为null
-        boolean cheakNullflag = this.getSn() == null || this.getStoreId() == null || this.getUserId() == null
-            || this.getItemId() == null || this.getBuyId() == null || this.getInState() == null || this.getNum() == null
-            || this.getInTime() == null || this.getStock() == null;
-        return !cheakNullflag;
+        boolean cheakNullflag = this.getSn() != null && this.getStoreId() != null && this.getUserId() != null
+            && this.getItemId() != null && this.getBuyId() != null && this.getInState() != null && this.getNum() != null
+            && this.getInTime() != null && this.getStock() != null;
+        return cheakNullflag;
     }
 }

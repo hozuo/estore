@@ -29,6 +29,7 @@ public class SwaggerConfig {
             .build();
     }
 
+    @SuppressWarnings("unused")
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("Spring Cloud Demo Api")
             .contact(new Contact("dukunbiao(null)", "https://blog.csdn.net/dkbnull", ""))

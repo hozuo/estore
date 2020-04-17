@@ -18,7 +18,6 @@ import top.ericson.vo.JsonResult;
  */
 @FeignClient(name = "sso-service")
 public interface UserFeignService {
-
     /**
      * @author Ericson
      * @date 2020/04/15 15:12

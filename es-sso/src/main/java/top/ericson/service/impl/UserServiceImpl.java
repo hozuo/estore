@@ -93,4 +93,19 @@ public class UserServiceImpl implements UserService {
         }
         return usersNameMap;
     }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 08:09
+     * @param username
+     * @see top.ericson.service.UserService#findByName(java.lang.String)
+     * @description 
+     */
+    @Override
+    public User findByName(String username) {
+        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        User user = userMapper.selectOne(queryWrapper);
+        return user;
+    }
 }

@@ -74,7 +74,7 @@ public class JwtUtil {
         String username = null;
         try {
             Claims body = jws.getBody();
-            userId = Integer.parseInt((String)body.get("userId"));
+            userId = (Integer)body.get("userId");
             username = (String)body.get("username");
             log.debug("userId:{}", userId);
             log.debug("username:{}", username);

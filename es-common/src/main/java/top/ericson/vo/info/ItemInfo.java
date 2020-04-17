@@ -3,6 +3,7 @@ package top.ericson.vo.info;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import top.ericson.pojo.Item;
 
 /**
  * @author Ericson
@@ -46,11 +47,30 @@ public class ItemInfo extends BaseInfo {
     private String unitStr;
 
     /*进价*/
-    private Long buyprice;
+    private Long buyPrice;
 
     /*售价*/
-    private Long saleprice;
+    private Long salePrice;
 
     /*备注*/
     private String remark;
+
+    /**
+     * @date 2020/04/14
+     * @author Ericson
+     * @param itemInfo
+     * @description info构造pojo
+     */
+    public Item getPojo() {
+        Item item = new Item();
+        item.setItemId(id);
+        item.setName(name);
+        item.setItemSn(sn);
+        item.setCatId(catId);
+        item.setSpecId(specId);
+        item.setUnitId(unitId);
+        item.setBuyPrice(buyPrice);
+        item.setSalePrice(salePrice);
+        return item;
+    }
 }

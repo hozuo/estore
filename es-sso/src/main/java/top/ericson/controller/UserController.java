@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.exception.ServiceException;
+import top.ericson.pojo.User;
 import top.ericson.service.UserService;
 import top.ericson.util.JwtUtilPrivate;
 import top.ericson.vo.JsonResult;
@@ -63,8 +64,9 @@ public class UserController {
     @ResponseBody
     public JsonResult doLogin(String username, String password, boolean isRememberMe) {
         /*TODO 验证用户名密码是否正确*/
+        User user = userService.findByName(username);
         /*创建token*/
-        String jwt = JwtUtilPrivate.buildJwt("8888", password);
+        String jwt = JwtUtilPrivate.buildJwt(user.getUserId(), username);
         return JsonResult.success(jwt);
     }
 

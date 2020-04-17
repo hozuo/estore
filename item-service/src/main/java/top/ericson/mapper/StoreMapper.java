@@ -1,41 +1,60 @@
 package top.ericson.mapper;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-import top.ericson.pojo.Item;
+import top.ericson.pojo.Store;
 
 /**
  * @author Ericson
- * @class InstockMapper
- * @date 2020/03/31 17:14
+ * @class StoreMapper
+ * @date 2020/04/16 19:40
  * @version 1.0
- * @description 入库流水mapper
+ * @description 仓库信息mapper
  */
 @Mapper
-public interface StoreMapper extends BaseMapper<Item> {
+public interface StoreMapper extends BaseMapper<Store> {
 
     /**
      * @author Ericson
-     * @param name 商品名称
-     * @date 2020/04/04 16:19
-     * @return int 总记录数
-     * @description 查询总记录数
+     * @date 2020/04/16 19:40
+     * @param name
+     * @return
+     * @description
      */
     int getRowCount(String name);
 
     /**
      * @author Ericson
-     * @date 2020/04/04 16:41
-     * @param startIndex 起始下标
-     * @param pageSize 每页的行数,也是查询的个数
-     * @param name 查询的名称,可以为""
-     * @return List<Item> 一页商品的列表
-     * @description 查询一页
+     * @date 2020/04/16 19:40
+     * @param startIndex
+     * @param pageSize
+     * @param name
+     * @return
+     * @description 分页查询
      */
-    List<Item> findPageObjects(Integer startIndex, Integer pageSize, String name);
-    
+    List<Store> findPageObjects(Integer start, Integer rows, String orderBy, String orderType, String name);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 10:43
+     * @param idSet
+     * @description 查询很多名字
+     */
+    Map<Integer, String> selectStoresNameById(Set<Integer> idSet);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 10:47
+     * @param id
+     * @return
+     * @description 
+     */
+    String selectStoreNameById(Integer id);
+
 }

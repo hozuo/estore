@@ -62,7 +62,7 @@ public class JwtUtilPrivate {
      * @return jwt
      * @description
      */
-    public static String buildJwt(String userId, String username) {
+    public static String buildJwt(Integer userId, String username) {
         Date expiration = new Date(System.currentTimeMillis() + EXPIRE_TIME);
         String jwt = Jwts.builder()
             /*设置头信息*/
@@ -88,7 +88,7 @@ public class JwtUtilPrivate {
             // 私钥和加密算法
             .signWith(privateKey, SignatureAlgorithm.RS256)
             // 添加声明
-            .claim("userId", userId)
+            .claim("userId", userId.toString())
             .claim("username", username)
             .compact();
         log.debug("jwt:{}", jwt);

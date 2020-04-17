@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-@TableName("sys_store")
+@TableName("es_store")
 public class Store extends BasePojo{
     
     private static final long serialVersionUID = 8757962156769014452L;

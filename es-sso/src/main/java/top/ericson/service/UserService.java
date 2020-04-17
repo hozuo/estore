@@ -3,6 +3,8 @@ package top.ericson.service;
 import java.util.Map;
 import java.util.Set;
 
+import top.ericson.pojo.User;
+
 /**
  * @author Ericson
  * @class UserService
@@ -49,5 +51,14 @@ public interface UserService {
      * @description 
      */
     Map<Integer, String> findUsersNameById(Set<Integer> idSet);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 08:08
+     * @param username
+     * @return 
+     * @description 
+     */
+    User findByName(String username);
 
 }
