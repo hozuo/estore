@@ -1,14 +1,22 @@
 package top.ericson.service.impl;
 
-import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Item;
-import top.ericson.vo.PageObject;
+import top.ericson.vo.PageQuery;
 import top.ericson.vo.info.ItemInfo;
 import top.ericson.mapper.ItemMapper;
 import top.ericson.service.ItemService;
@@ -20,6 +28,7 @@ import top.ericson.service.ItemService;
  * @version 1.0
  * @description 商品服务
  */
+@Slf4j
 @Service
 public class ItemServiceImpl implements ItemService {
 
@@ -31,103 +40,123 @@ public class ItemServiceImpl implements ItemService {
 
     /**
      * @author Ericson
-     * @date 2020/03/31 20:40
-     * @param startIndex 起始下标
-     * @param pageSize 每页的行数,也是查询的个数
-     * @param name 查询的名称,可以为""
-     * @return PageObject<Item> 
-     * @see top.ericson.service.InStockService#findInstockByPage(java.lang.Integer, java.lang.Integer)
-     * @description 查询一页商品
+     * @date 2020/04/16 20:07
+     * @param start
+     * @param rows
+     * @param orderBy
+     * @param orderType
+     * @param name
+     * @return
+     * @see top.ericson.service.StoreService#findPage(java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String)
+     * @description 分页
      */
     @Override
-    public PageObject<Item> findItemsByPage(Integer pageCurrent, Integer pageSize, String name) {
-//        System.out.println(pageCurrent.intValue());
-//        System.out.println(pageSize.intValue());
-//        System.out.println(name);
-//        // 1.验证参数合法性
-//        // 验证pageCurrent的合法性，
-//        if (pageCurrent == null || pageCurrent < 1) {
-//            // 不合法抛出IllegalArgumentException异常
-//            throw new IllegalArgumentException("当前页码不正确");
-//        }
-//        // 2.基于条件查询总记录数
-//        // 执行查询
-//        int rowCount = itemMapper.getRowCount(name);
-//        // 验证查询结果，假如结果为0不再执行如下操作
-//        if (rowCount == 0) {
-//            throw new ServiceException("系统没有查到对应记录", 0);
-//        }
-//        // 3.基于条件查询当前页记录(pageSize定义为2)
-//        // 计算startIndex
-//        int startIndex = (pageCurrent - 1) * pageSize;
-//        // 执行当前数据的查询操作
-//        List<Item> records = itemMapper.findPageObjects(startIndex, pageSize, name);
-//        // 4.对分页信息以及当前页记录进行封装
-//        // 构建PageObject对象
-//        PageObject<Item> pageObject = new PageObject<>();
-//        // 封装数据
-//        pageObject.setPageCurrent(pageCurrent);
-//        pageObject.setPageSize(pageSize);
-//        pageObject.setRowCount(rowCount);
-//        pageObject.setRecords(records);
-//        pageObject.setPageCount((rowCount - 1) / pageSize + 1);
-//        // 5.返回封装结果。
-//        return pageObject;
-        return null;
+    public IPage<Item> findPage(PageQuery pageQuery) {
+
+        /*开启分页查询*/
+        Page<Item> page = new Page<>(pageQuery.getPageCurrent(), pageQuery.getPageSize());
+        log.debug("page:{}", page);
+
+        /*条件构造器*/
+        QueryWrapper<Item> queryWrapper = new QueryWrapper<>();
+        // 名称查询
+        if (pageQuery.getName() != null) {
+            queryWrapper.like("name", pageQuery.getName());
+        }
+        // 排序
+        if (pageQuery.getOrderBy() != null) {
+            queryWrapper.orderBy(true, pageQuery.getIsASC(), pageQuery.getOrderBy());
+        }
+
+        IPage<Item> iPage = itemMapper.selectPage(page, queryWrapper);
+        log.debug("iPage:{}", iPage);
+        return iPage;
     }
 
     /**
      * @author Ericson
-     * @date 2020/04/05 01:05
-     * @param ItemId
+     * @date 2020/04/16 20:07
+     * @param info
      * @return
-     * @see top.ericson.service.ItemService#findItemById(java.lang.Integer)
-     * @description 
+     * @see top.ericson.service.StoreService#insert(top.ericson.vo.info.ItemInfo)
+     * @description 增
      */
     @Override
-    public Item findItemById(Integer ItemId) {
-        return itemMapper.selectById(ItemId);
-    }
-
-    @Override
-    public Integer insertItem(ItemInfo itemInfo) {
-        Item item = itemInfo.getPojo();
-        Date now = new Date();
-        item.setCreateTime(now)
-            .setCreateUser((Integer)request.getAttribute("userId"))
-            .setUpdateTime(now)
-            .setUpdateUser((Integer)request.getAttribute("userId"));
+    public Integer create(ItemInfo info) {
+        Item item = info.buildPojo();
         return itemMapper.insert(item);
     }
 
     /**
      * @author Ericson
-     * @date 2020/04/14 15:57
-     * @param itemId
+     * @date 2020/04/16 20:07
+     * @param id
      * @return
-     * @see top.ericson.service.ItemService#deleteItemById(java.lang.Integer)
-     * @description 
+     * @see top.ericson.service.StoreService#deleteById(java.lang.Integer)
+     * @description 删
      */
     @Override
-    public Integer deleteItemById(Integer id) {
+    public Integer deleteById(Integer id) {
         return itemMapper.deleteById(id);
     }
 
     /**
      * @author Ericson
-     * @date 2020/04/14 16:07
+     * @date 2020/04/16 20:07
      * @param itemInfo
-     * @return 
-     * @see top.ericson.service.ItemService#updateItem(top.ericson.vo.info.ItemInfo)
-     * @description 
+     * @return
+     * @see top.ericson.service.StoreService#update(top.ericson.vo.info.ItemInfo)
+     * @description 改
      */
     @Override
-    public Integer updateItem(ItemInfo itemInfo) {
-        Item item = itemInfo.getPojo();
-        Date date = new Date();
-        item.setUpdateTime(date)
-            .setUpdateUser((Integer)request.getAttribute("userId"));
-        return itemMapper.updateById(item);
+    public Integer update(ItemInfo info) {
+        return itemMapper.updateById(info.buildPojo());
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/16 20:07
+     * @param id
+     * @return
+     * @see top.ericson.service.StoreService#findById(java.lang.Integer)
+     * @description 查
+     */
+    @Override
+    public Item findById(Integer id) {
+        return itemMapper.selectById(id);
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 
+     * @param idSet
+     * @return nameMap
+     * @see top.ericson.service.StoreService#findNamesById(java.lang.Integer)
+     * @description 查很多名字
+     */
+    @Override
+    public Map<Integer, String> findNamesById(Set<Integer> idSet) {
+        List<Item> list = itemMapper.selectNamesById(idSet);
+        Map<Integer, String> nameMap = new HashMap<Integer, String>();
+        for (Item item : list) {
+            if (item != null && item.getName() != null) {
+                nameMap.put(item.getItemId(), item.getName());
+            }
+        }
+        return nameMap;
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17
+     * @param id
+     * @return
+     * @see top.ericson.service.StoreService#findNameById(java.lang.Integer)
+     * @description 查一个名字
+     */
+    @Override
+    public String findNameById(Integer id) {
+        return itemMapper.selectNameById(id);
     }
 
 }

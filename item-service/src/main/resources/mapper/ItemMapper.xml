@@ -26,5 +26,24 @@
         <include refid="queryWhereName"/>
     </select>
 
+    <select id="selectNamesById" resultType="Item">
+        SELECT item_id,name
+        FROM es_item
+        <where>
+            <if test="collection != null and collection">
+                item_id in
+                <foreach collection="collection" item="id" index="index" open="(" separator=","
+                    close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectNameById" resultType="String">
+        SELECT name
+        FROM es_item
+        WHERE id = #{id}
+    </select>
 
 </mapper>

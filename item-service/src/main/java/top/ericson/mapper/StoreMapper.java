@@ -46,7 +46,7 @@ public interface StoreMapper extends BaseMapper<Store> {
      * @param idSet
      * @description 查询很多名字
      */
-    Map<Integer, String> selectStoresNameById(Set<Integer> idSet);
+    List<Store> selectStoresNameById(Set<Integer> idSet);
 
     /**
      * @author Ericson

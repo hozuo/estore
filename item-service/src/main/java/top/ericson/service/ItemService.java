@@ -1,7 +1,12 @@
 package top.ericson.service;
 
+import java.util.Map;
+import java.util.Set;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+
 import top.ericson.pojo.Item;
-import top.ericson.vo.PageObject;
+import top.ericson.vo.PageQuery;
 import top.ericson.vo.info.ItemInfo;
 
 /**
@@ -15,33 +20,64 @@ public interface ItemService {
 
     /**
      * @author Ericson
-     * @date 2020/03/31 20:39
-     * @param startIndex 起始下标
-     * @param pageSize 每页的行数,也是查询的个数
-     * @param name 查询的名称,可以为""
-     * @return findItemByPage
-     * @description 查询一页商品
-     */
-    PageObject<Item> findItemsByPage(Integer pageCurrent, Integer pageSize, String name);
-    
-    Item findItemById(Integer ItemId);
-    
-    Integer insertItem(ItemInfo itemInfo);
-
-    /**
-     * @author Ericson
-     * @date 2020/04/14 15:55
-     * @param itemId
+     * @date 2020/04/17 18:03
+     * @param pageQuery
      * @return
      * @description 
      */
-    Integer deleteItemById(Integer id);
+    IPage<Item> findPage(PageQuery pageQuery);
 
     /**
      * @author Ericson
-     * @date 2020/04/14 16:07
-     * @param itemInfo
+     * @date 2020/04/17 18:05
+     * @param id
+     * @return
      * @description 
      */
-    Integer updateItem(ItemInfo itemInfo);
+    Integer deleteById(Integer id);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 18:05
+     * @param itemInfo
+     * @return
+     * @description 
+     */
+    Integer update(ItemInfo itemInfo);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 18:05
+     * @param id
+     * @return
+     * @description 
+     */
+    Item findById(Integer id);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 18:06
+     * @param idSet
+     * @return
+     * @description 
+     */
+    Map<Integer, String> findNamesById(Set<Integer> idSet);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 18:06
+     * @param id
+     * @return
+     * @description 
+     */
+    String findNameById(Integer id);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 18:11
+     * @param itemInfo
+     * @return
+     * @description 
+     */
+    Object create(ItemInfo itemInfo);
 }

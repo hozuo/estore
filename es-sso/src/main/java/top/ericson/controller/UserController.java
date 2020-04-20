@@ -47,7 +47,7 @@ public class UserController {
      */
     @GetMapping("/user/{id}/name")
     public JsonResult findUserNameById(@PathVariable("id") Integer userId) {
-        String userName = userService.findUserNameById(userId);
+        String userName = userService.findNameById(userId);
         return JsonResult.success(userName);
     }
     
@@ -144,7 +144,7 @@ public class UserController {
     @GetMapping("/users/search/name")
     public JsonResult findUsersNameById(@RequestParam(value = "id") Set<Integer> idSet) {
         log.debug("set:{}", idSet);
-        Map<Integer, String> itemsNameMap = userService.findUsersNameById(idSet);
+        Map<Integer, String> itemsNameMap = userService.findNamesById(idSet);
         return JsonResult.success(itemsNameMap);
     }
 

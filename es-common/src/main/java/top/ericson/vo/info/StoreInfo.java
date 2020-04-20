@@ -55,6 +55,21 @@ public class StoreInfo extends BaseInfo {
         createUserId = store.getCreateUser();
     }
 
+    public StoreInfo(Store store, Map<String, String> usernameMap) {
+        id = store.getStoreId();
+        name = store.getName();
+        sn = store.getStoreSn();
+        addr = store.getAddress();
+        managerId = store.getManager();
+        managerStr = usernameMap.get(managerId.toString());
+        updateTime = store.getUpdateTime();
+        updateUserId = store.getUpdateUser();
+        updateUserStr = usernameMap.get(updateUserId.toString());
+        createTime = store.getCreateTime();
+        createUserId = store.getCreateUser();
+        createUserStr = usernameMap.get(createUserId.toString());
+    }
+
     /**
      * @author Ericson
      * @date 2020/04/17 10:14
@@ -66,7 +81,7 @@ public class StoreInfo extends BaseInfo {
         return cheakNullflag;
     }
 
-    public Store getPojo() {
+    public Store buildPojo() {
         Store store = new Store();
         store.setStoreId(id)
             .setName(name)
@@ -84,14 +99,17 @@ public class StoreInfo extends BaseInfo {
      * @return
      * @description 通过storelist和用户名称map构造infolist
      */
-    public static List<StoreInfo> getInfoList(List<Store> storeList, Map<Integer, String> usernameMap) {
+    public static List<StoreInfo> buildInfoList(List<Store> storeList, Map<String, String> usernameMap) {
         List<StoreInfo> infoList = new ArrayList<StoreInfo>();
         StoreInfo storeInfo;
         for (Store s : storeList) {
             storeInfo = new StoreInfo(s);
-            storeInfo.setManagerStr(usernameMap.get(storeInfo.getManagerId()))
-                .setUpdateUserStr(usernameMap.get(storeInfo.getUpdateUserId()))
-                .setCreateUserStr(usernameMap.get(storeInfo.getCreateUserId()));
+            storeInfo.setManagerStr(usernameMap.get(storeInfo.getManagerId()
+                .toString()))
+                .setUpdateUserStr(usernameMap.get(storeInfo.getUpdateUserId()
+                    .toString()))
+                .setCreateUserStr(usernameMap.get(storeInfo.getCreateUserId()
+                    .toString()));
             infoList.add(storeInfo);
         }
         return infoList;

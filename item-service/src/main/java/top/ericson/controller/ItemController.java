@@ -1,7 +1,6 @@
 package top.ericson.controller;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Item;
 import top.ericson.service.ItemService;
 import top.ericson.vo.JsonResult;
+import top.ericson.vo.PageQuery;
 import top.ericson.vo.ResultCode;
 import top.ericson.vo.info.ItemInfo;
 
@@ -35,7 +35,7 @@ public class ItemController {
 
     @Autowired
     private ItemService itemService;
-    
+
     /**
      * @author Ericson
      * @date 2020/04/14 16:11
@@ -44,8 +44,8 @@ public class ItemController {
      * @description [新增]商品
      */
     @PostMapping("/item")
-    public JsonResult createItem(ItemInfo itemInfo) {
-        return JsonResult.success(itemService.insertItem(itemInfo));
+    public JsonResult create(ItemInfo itemInfo) {
+        return JsonResult.success(itemService.create(itemInfo));
     }
 
     /**
@@ -56,11 +56,11 @@ public class ItemController {
      * @description [删除] 根据id删除商品
      */
     @DeleteMapping("/item/{id}")
-    public JsonResult deleteItemById(@PathVariable("id") Integer id) {
+    public JsonResult deleteById(@PathVariable("id") Integer id) {
         if (id == null || id == 0) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
         }
-        Integer deleteNum = itemService.deleteItemById(id);
+        Integer deleteNum = itemService.deleteById(id);
         if (deleteNum == 1) {
             return JsonResult.success("成功删除1条数据");
         } else if (deleteNum == 0) {
@@ -78,12 +78,12 @@ public class ItemController {
      * @description [修改] 更新商品
      */
     @PutMapping("/item/{id}")
-    public JsonResult updateItem(@PathVariable("id") Integer id, ItemInfo itemInfo) {
+    public JsonResult update(@PathVariable("id") Integer id, ItemInfo itemInfo) {
         if (id == null || id == 0 || itemInfo == null) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
         }
         itemInfo.setId(id);
-        Integer updateNum = itemService.updateItem(itemInfo);
+        Integer updateNum = itemService.update(itemInfo);
         if (updateNum == 1) {
             return JsonResult.success("成功更新1条数据");
         } else if (updateNum == 0) {
@@ -92,7 +92,7 @@ public class ItemController {
             return JsonResult.build(ResultCode.SYS_ERROR);
         }
     }
-    
+
     /**
      * @author Ericson
      * @date 2020/04/05 00:22
@@ -102,14 +102,14 @@ public class ItemController {
      */
     @GetMapping("/item/{id}")
     public JsonResult findItemById(@PathVariable("id") Integer itemId) {
-        Item item = itemService.findItemById(itemId);
+        Item item = itemService.findById(itemId);
         if (item == null) {
             return JsonResult.msg("找不到商品");
-        }else {
+        } else {
             return JsonResult.success(item);
         }
     }
-    
+
     /**
      * @author Ericson
      * @date 2020/04/15 15:01
@@ -119,19 +119,16 @@ public class ItemController {
      */
     @GetMapping("/item/{id}/name")
     JsonResult findItemNameById(@PathVariable("id") Integer itemId) {
-        Item item = itemService.findItemById(itemId);
+        Item item = itemService.findById(itemId);
         if (item == null) {
             return JsonResult.msg("找不到商品");
-        }else {
+        } else {
             return JsonResult.success(item.getName());
         }
     }
-    
-    
-    
-    
+
     /*复数资源*/
-    
+
     /**
      * @author Ericson
      * @date 2020/04/03 13:55
@@ -142,9 +139,8 @@ public class ItemController {
      * @description 分页查询
      */
     @GetMapping("/items")
-    public JsonResult findItemsByPage(@RequestParam Integer pageCurrent, @RequestParam Integer pageSize,
-        @RequestParam String name) {
-        return JsonResult.success(itemService.findItemsByPage(pageCurrent, pageSize, name));
+    public JsonResult findByPage(PageQuery pageQuery) {
+        return JsonResult.success(itemService.findPage(pageQuery));
     }
 
     @GetMapping("/items/search")
@@ -152,7 +148,7 @@ public class ItemController {
         log.debug("set:{}", set);
         List<Item> itemList = new ArrayList<>();
         for (Integer i : set) {
-            itemList.add(itemService.findItemById(i));
+            itemList.add(itemService.findById(i));
         }
         log.debug("itemList:{}", itemList);
         return JsonResult.success(itemList);
@@ -161,14 +157,9 @@ public class ItemController {
     @GetMapping("/items/search/name")
     public JsonResult findItemsNameById(@RequestParam("id") Set<Integer> idSet) {
         log.debug("set:{}", idSet);
-        Map<Integer, String> nameMap = new LinkedHashMap<Integer, String>();
-        for (Integer i : idSet) {
-            nameMap.put(i, itemService.findItemById(i)
-                .getName());
-        }
+        Map<Integer, String> nameMap = itemService.findNamesById(idSet);
         log.debug("nameMap:{}", nameMap);
         return JsonResult.success(nameMap);
     }
-    
 
 }

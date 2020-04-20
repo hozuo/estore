@@ -88,7 +88,7 @@ public class JwtUtilPrivate {
             // 私钥和加密算法
             .signWith(privateKey, SignatureAlgorithm.RS256)
             // 添加声明
-            .claim("userId", userId.toString())
+            .claim("userId", userId)
             .claim("username", username)
             .compact();
         log.debug("jwt:{}", jwt);

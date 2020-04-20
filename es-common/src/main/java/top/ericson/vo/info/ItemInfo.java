@@ -61,16 +61,17 @@ public class ItemInfo extends BaseInfo {
      * @param itemInfo
      * @description info构造pojo
      */
-    public Item getPojo() {
+    public Item buildPojo() {
         Item item = new Item();
-        item.setItemId(id);
-        item.setName(name);
-        item.setItemSn(sn);
-        item.setCatId(catId);
-        item.setSpecId(specId);
-        item.setUnitId(unitId);
-        item.setBuyPrice(buyPrice);
-        item.setSalePrice(salePrice);
+        item.setItemId(id)
+            .setName(name)
+            .setItemSn(sn)
+            .setCatId(catId)
+            .setSpecId(specId)
+            .setUnitId(unitId)
+            .setBuyPrice(buyPrice)
+            .setSalePrice(salePrice);
         return item;
     }
+
 }

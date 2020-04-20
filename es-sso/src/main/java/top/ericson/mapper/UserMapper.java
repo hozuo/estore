@@ -21,4 +21,6 @@ public interface UserMapper extends BaseMapper<User> {
     
     public List<User> selectUsersNameById(Set<Integer> idSet);
     
+    public String selectUserNameById(Integer id);
+    
 }

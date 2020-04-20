@@ -42,7 +42,7 @@ public interface UserService {
      * @param userId
      * @description 
      */
-    String findUserNameById(Integer userId);
+    String findNameById(Integer userId);
 
     /**
      * @author Ericson
@@ -50,7 +50,7 @@ public interface UserService {
      * @param idSet
      * @description 
      */
-    Map<Integer, String> findUsersNameById(Set<Integer> idSet);
+    Map<Integer, String> findNamesById(Set<Integer> idSet);
 
     /**
      * @author Ericson

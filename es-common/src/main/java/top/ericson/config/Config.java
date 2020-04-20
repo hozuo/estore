@@ -1,5 +1,10 @@
 package top.ericson.config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+
 /**
  * @author Ericson
  * @class Config
@@ -7,6 +12,12 @@ package top.ericson.config;
  * @version 1.0
  * @description 
  */
+@Configuration
 public class Config {
-    public static final String VERSION="/v10";
+    public static final String VERSION = "/v10";
+
+    @Bean
+    public PaginationInterceptor paginationInterceptor() {
+        return new PaginationInterceptor();
+    }
 }

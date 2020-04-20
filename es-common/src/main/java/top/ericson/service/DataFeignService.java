@@ -16,8 +16,8 @@ import top.ericson.vo.JsonResult;
  * @version 1.0
  * @description 商品feginservice
  */
-@FeignClient(name = "item-service")
-public interface ItemFeignService {
+@FeignClient(name = "data-service")
+public interface DataFeignService {
 
     @GetMapping("/item/{id}")
     public JsonResult findItemById(@PathVariable("id") Integer itemId);
@@ -34,4 +34,23 @@ public interface ItemFeignService {
 
     @GetMapping("/items/search/name")
     public JsonResult findItemsNameById(@RequestParam("id") Set<Integer> idSet);
+    /**
+     * @author Ericson
+     * @date 2020/04/19
+     * @param userId
+     * @return JsonResult
+     * @description 根据id查询仓库名
+     */
+    @GetMapping("/store/{id}/name")
+    public JsonResult findStoreNameById(@PathVariable("id") Integer userId);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/19
+     * @param idSet
+     * @return
+     * @description 查询很多的name
+     */
+    @GetMapping("/stores/search/name")
+    public JsonResult findStoresNameById(@RequestParam(value = "id") Set<Integer> idSet);
 }

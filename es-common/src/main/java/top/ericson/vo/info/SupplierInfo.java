@@ -26,7 +26,7 @@ import top.ericson.pojo.Instock;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @NoArgsConstructor
-public class InstockInfo extends BaseInfo {
+public class SupplierInfo extends BaseInfo {
 
     private static final long serialVersionUID = -4587826846673622150L;
 
@@ -65,7 +65,7 @@ public class InstockInfo extends BaseInfo {
      * @param instock
      * @description 将pojo对象中的非ID变量赋给info
      */
-    public InstockInfo(Instock instock) {
+    public SupplierInfo(Instock instock) {
         id = instock.getInId();
         sn = instock.getInSn();
         storeId = instock.getStoreId();
@@ -88,7 +88,7 @@ public class InstockInfo extends BaseInfo {
      * @param instock
      * @description 将pojo对象中的非ID变量赋给info
      */
-    public InstockInfo(Instock instock, Map<String, String> usernameMap) {
+    public SupplierInfo(Instock instock, Map<String, String> usernameMap) {
         id = instock.getInId();
         sn = instock.getInSn();
         storeId = instock.getStoreId();
@@ -123,12 +123,12 @@ public class InstockInfo extends BaseInfo {
         return cheakNullflag;
     }
 
-    public static List<InstockInfo> buildInfoList(List<Instock> instockList, Map<String, String> usernameMap,
+    public static List<SupplierInfo> buildInfoList(List<Instock> instockList, Map<String, String> usernameMap,
         Map<String, String> itemsNameMap, Map<String, String> storesNameMap) {
-        List<InstockInfo> infoList = new ArrayList<InstockInfo>();
-        InstockInfo info;
+        List<SupplierInfo> infoList = new ArrayList<SupplierInfo>();
+        SupplierInfo info;
         for (Instock i : instockList) {
-            info = new InstockInfo(i);
+            info = new SupplierInfo(i);
             info.setUserStr(usernameMap.get(info.getUserId()
                 .toString()))
                 .setItemStr(itemsNameMap.get(info.getItemId()

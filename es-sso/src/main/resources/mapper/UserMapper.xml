@@ -17,5 +17,11 @@
             </if>
         </where>
     </select>
+    
+    <select id="selectUserNameById" resultType="String">
+        SELECT username
+        FROM sys_user
+        WHERE user_id = #{id}
+    </select>
 
 </mapper>

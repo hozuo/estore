@@ -1,6 +1,7 @@
 package top.ericson.mapper;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -37,5 +38,23 @@ public interface ItemMapper extends BaseMapper<Item> {
      * @description 查询一页
      */
     List<Item> findPageObjects(Integer startIndex, Integer pageSize, String name);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 18:12
+     * @param idSet
+     * @return
+     * @description 
+     */
+    List<Item> selectNamesById(Set<Integer> idSet);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 18:12
+     * @param id
+     * @return
+     * @description 
+     */
+    String selectNameById(Integer id);
     
 }

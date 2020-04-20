@@ -1,5 +1,7 @@
 package top.ericson.service.impl;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,6 +12,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Store;
 import top.ericson.vo.PageQuery;
 import top.ericson.vo.info.StoreInfo;
@@ -23,6 +26,7 @@ import top.ericson.service.StoreService;
  * @version 1.0
  * @description 仓库服务
  */
+@Slf4j
 @Service
 public class StoreServiceImpl implements StoreService {
 
@@ -43,16 +47,24 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public IPage<Store> findPage(PageQuery pageQuery) {
-        
+
         /*开启分页查询*/
         Page<Store> page = new Page<>(pageQuery.getPageCurrent(), pageQuery.getPageSize());
+        log.debug("page:{}", page);
 
         /*条件构造器*/
         QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderBy(true, pageQuery.getIsASC(), pageQuery.getOrderBy());
+        // 名称查询
+        if (pageQuery.getName() != null) {
+            queryWrapper.like("name", pageQuery.getName());
+        }
+        // 排序
+        if (pageQuery.getOrderBy() != null) {
+            queryWrapper.orderBy(true, pageQuery.getIsASC(), pageQuery.getOrderBy());
+        }
 
         IPage<Store> iPage = storeMapper.selectPage(page, queryWrapper);
-        
+        log.debug("iPage:{}", iPage);
         return iPage;
     }
 
@@ -66,7 +78,7 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public Integer insert(StoreInfo storeInfo) {
-        Store store = storeInfo.getPojo();
+        Store store = storeInfo.buildPojo();
         return storeMapper.insert(store);
     }
 
@@ -93,7 +105,7 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public Integer update(StoreInfo storeInfo) {
-        return storeMapper.updateById(storeInfo.getPojo());
+        return storeMapper.updateById(storeInfo.buildPojo());
     }
 
     /**
@@ -119,7 +131,11 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     public Map<Integer, String> findNamesById(Set<Integer> idSet) {
-        Map<Integer, String> nameMap = storeMapper.selectStoresNameById(idSet);
+        List<Store> storeList = storeMapper.selectStoresNameById(idSet);
+        Map<Integer, String> nameMap=new HashMap<>();
+        for (Store store : storeList) {
+            nameMap.put(store.getStoreId(), store.getName());
+        }
         return nameMap;
     }
 

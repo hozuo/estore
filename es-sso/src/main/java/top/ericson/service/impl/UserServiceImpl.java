@@ -71,9 +71,8 @@ public class UserServiceImpl implements UserService {
      * @description 
      */
     @Override
-    public String findUserNameById(Integer userId) {
-        User user = userMapper.selectById(userId);
-        return user.getUsername();
+    public String findNameById(Integer id) {
+        return userMapper.selectUserNameById(id);
     }
 
     /**
@@ -84,7 +83,7 @@ public class UserServiceImpl implements UserService {
      * @description 
      */
     @Override
-    public Map<Integer, String> findUsersNameById(Set<Integer> idSet) {
+    public Map<Integer, String> findNamesById(Set<Integer> idSet) {
         log.debug("idSet:{}", idSet);
         List<User> userList = userMapper.selectUsersNameById(idSet);
         HashMap<Integer, String> usersNameMap = new HashMap<Integer, String>();

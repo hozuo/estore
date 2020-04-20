@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import top.ericson.pojo.Store;
+import top.ericson.vo.info.StoreInfo;
 
 /**
  * @author Ericson
@@ -36,11 +38,18 @@ public class PageObject<T> implements Serializable {
     /**当前页记录*/
     private List<T> records;
 
-    public PageObject(IPage<T> iPage, List<T> infoList) {
+    /**
+     * @date 2020/04/19
+     * @author Ericson
+     * @param iPage 泛型应该是一个pojo类型
+     * @param infoList 泛型应该是一个info类型,与records的泛型相同
+     * @description
+     */
+    public PageObject(IPage<?> iPage, List<T> infoList) {
         pageCurrent = iPage.getCurrent();
-        pageSize = iPage.getPages();
+        pageSize = iPage.getSize();
         total = iPage.getTotal();
-        pages = iPage.getSize();
+        pages = iPage.getPages();
         records = infoList;
     }
 

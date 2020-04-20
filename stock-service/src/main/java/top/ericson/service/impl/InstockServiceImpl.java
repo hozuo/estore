@@ -1,16 +1,21 @@
 package top.ericson.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Instock;
 import top.ericson.mapper.InstockMapper;
 import top.ericson.service.InstockService;
+import top.ericson.vo.PageQuery;
 import top.ericson.vo.info.InstockInfo;
 
 /**
@@ -20,6 +25,7 @@ import top.ericson.vo.info.InstockInfo;
  * @version 1.0
  * @description 
  */
+@Slf4j
 @Service
 public class InstockServiceImpl implements InstockService {
 
@@ -31,23 +37,6 @@ public class InstockServiceImpl implements InstockService {
 
     /**
      * @author Ericson
-     * @date 2020/03/31 20:40
-     * @param page
-     * @param rows
-     * @return
-     * @see top.ericson.service.InstockService#findInstockByPage(java.lang.Integer, java.lang.Integer)
-     * @description 
-     */
-    @Override
-    public List<Instock> findInstockByPage(Integer page, Integer rows, String orderBy, String orderType,
-        List<Integer> inIdList, List<Integer> itemIdList) {
-        int start = (page - 1) * rows;
-        List<Instock> itemList = instockMapper.findInstockByPage(start, rows, orderBy, orderType, inIdList, itemIdList);
-        return itemList;
-    }
-
-    /**
-     * @author Ericson
      * @date 2020/04/05 00:45
      * @param inStockId
      * @return
@@ -55,20 +44,8 @@ public class InstockServiceImpl implements InstockService {
      * @description 
      */
     @Override
-    public Instock findInstockById(String inStockId) {
+    public Instock findById(String inStockId) {
         return instockMapper.selectById(inStockId);
-    }
-
-    /**
-     * @author Ericson
-     * @date 2020/04/08 19:07
-     * @return Integer 总数
-     * @see top.ericson.service.InstockService#selectCount()
-     * @description 统计总数
-     */
-    @Override
-    public Integer selectCount(String orderBy, String orderType, List<Integer> inIdList, List<Integer> itemIdList) {
-        return instockMapper.selectCount(orderType, orderType, itemIdList, itemIdList);
     }
 
     /**
@@ -86,24 +63,11 @@ public class InstockServiceImpl implements InstockService {
     /**
      * @author Ericson
      * @date 2020/04/08 23:26
-     * @param inSn
-     * @param storeId
-     * @param userId
-     * @param itemId
-     * @param buyId
-     * @param inState
-     * @param num
-     * @param inTime
-     * @param stock
-     * @param createTime
-     * @param createUser
-     * @param updateTime
-     * @param updateUser
      * @see top.ericson.service.InstockService#createInstock(java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.Integer, java.lang.Long, java.util.Date, java.lang.Long, java.util.Date, java.lang.Integer, java.util.Date, java.lang.Integer)
      * @description 使用pojo创建instock
      */
     @Override
-    public Integer createInstock(Instock instock) {
+    public Integer create(Instock instock) {
         Date now = new Date();
         Integer userId = (Integer)request.getAttribute("userId");
         instock.setCreateTime(now)
@@ -121,7 +85,7 @@ public class InstockServiceImpl implements InstockService {
      * @description 
      */
     @Override
-    public Integer deleteInstockById(Integer inId) {
+    public Integer deleteById(Integer inId) {
         return instockMapper.deleteById(inId);
     }
 
@@ -130,13 +94,14 @@ public class InstockServiceImpl implements InstockService {
      * @date 2020/04/14 18:41
      * @param instockInfo
      * @return
-     * @see top.ericson.service.InstockService#createInstock(top.ericson.vo.info.InstockInfo)
+     * @see top.ericson.service.InstockService#create(top.ericson.vo.info.InstockInfo)
      * @description 使用info创建instock
      */
     @Override
-    public Integer createInstock(InstockInfo instockInfo) {
+    public Integer create(InstockInfo instockInfo) {
         Instock instock = new Instock(instockInfo);
-        return this.createInstock(instock);
+        log.debug("instock:{}", instock);
+        return this.create(instock);
     }
 
     /**
@@ -148,12 +113,42 @@ public class InstockServiceImpl implements InstockService {
      * @description 更新入库流水
      */
     @Override
-    public Integer updateInstock(InstockInfo instockInfo) {
+    public Integer update(InstockInfo instockInfo) {
         Instock instock = new Instock(instockInfo);
         instock.setInId(instockInfo.getId())
             .setUpdateUser((Integer)request.getAttribute("userId"))
             .setUpdateTime(new Date());
         return instockMapper.updateById(instock);
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 17:44
+     * @param pageQuery
+     * @return
+     * @see top.ericson.service.InstockService#findPage(top.ericson.vo.PageQuery)
+     * @description 
+     */
+    @Override
+    public IPage<Instock> findPage(PageQuery pageQuery) {
+        /*开启分页查询*/
+        Page<Instock> page = new Page<>(pageQuery.getPageCurrent(), pageQuery.getPageSize());
+        log.debug("page:{}", page);
+        
+        /*条件构造器*/
+        QueryWrapper<Instock> queryWrapper = new QueryWrapper<>();
+        // 名称查询
+        if (pageQuery.getName() != null) {
+            queryWrapper.like("name", pageQuery.getName());
+        }
+        // 排序
+        if (pageQuery.getOrderBy() != null) {
+            queryWrapper.orderBy(true, pageQuery.getIsASC(), pageQuery.getOrderBy());
+        }
+
+        IPage<Instock> iPage = instockMapper.selectPage(page, queryWrapper);
+        log.debug("iPage:{}", iPage);
+        return iPage;
     }
 
 }

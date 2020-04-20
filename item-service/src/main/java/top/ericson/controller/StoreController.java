@@ -1,6 +1,5 @@
 package top.ericson.controller;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
@@ -118,15 +118,22 @@ public class StoreController {
      */
     @GetMapping("/store/{id}")
     public JsonResult findById(@PathVariable("id") Integer id) {
+        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         if (id == 0) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
         }
         Store store = storeService.findById(id);
         if (store == null) {
             return JsonResult.msg("找不到记录");
-        } else {
-            return JsonResult.success(store);
         }
+        Set<Integer> idSet = new HashSet<>();
+        idSet.add(store.getManager());
+        idSet.add(store.getUpdateUser());
+        idSet.add(store.getCreateUser());
+        Map<String, String> nameMap = (Map<String, String>)userService.findUsersNameById(idSet)
+            .getData();
+        StoreInfo storeInfo = new StoreInfo(store, nameMap);
+        return JsonResult.success(storeInfo);
     }
 
     /**
@@ -137,7 +144,7 @@ public class StoreController {
      * @description [查询] 名字
      */
     @GetMapping("/store/{id}/name")
-    JsonResult findNameById(@PathVariable("id") Integer id) {
+    JsonResult findStoreNameById(@PathVariable("id") Integer id) {
         String name = storeService.findNameById(id);
         if (name == null) {
             return JsonResult.msg("找不到记录");
@@ -159,6 +166,7 @@ public class StoreController {
      */
     @GetMapping("/stores")
     public JsonResult findByPage(PageQuery pageQuery) {
+        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         // 判断orderBy是否合法
         if (!pageQuery.cheak(new StoreInfo().getClass())) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
@@ -182,23 +190,26 @@ public class StoreController {
         }
         // 联合查询用户名
         JsonResult userJson = userService.findUsersNameById(idSet);
-        Map<Integer, String> usernameMap = (Map<Integer, String>)userJson.getData();
+        @SuppressWarnings("unchecked")
+        Map<String, String> usernameMap = (Map<String, String>)userJson.getData();
         // 构造infolist
-        List<StoreInfo> storeInfoList=new ArrayList<>();
-        StoreInfo.getInfoList(storeList, usernameMap);
-        
-        PageObject<StoreInfo> pageObject = new PageObject(iPage,storeInfoList);
-        pageObject.setPageCurrent(iPage.getCurrent())
-            .setPages(iPage.getPages())
-            .setTotal(iPage.getTotal())
-            .setPageSize(iPage.getSize())
-            .setRecords(storeInfoList);
+        List<StoreInfo> storeInfoList = StoreInfo.buildInfoList(storeList, usernameMap);
+
+        PageObject<StoreInfo> pageObject = new PageObject<StoreInfo>(iPage, storeInfoList);
 
         return JsonResult.success(pageObject);
     }
 
+    /**
+     * @author Ericson
+     * @date 2020/04/19 15:53
+     * @param idSet
+     * @return
+     * @description 查询很多名字
+     */
     @GetMapping("/stores/search/name")
-    public JsonResult findNamesById(@RequestParam("id") Set<Integer> idSet) {
+    public JsonResult findStoresNameById(@RequestParam("id") Set<Integer> idSet) {
+        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         if (idSet == null || idSet.size() == 0) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
         }

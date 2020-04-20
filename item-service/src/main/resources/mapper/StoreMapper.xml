@@ -40,10 +40,10 @@
         </where>
     </select>
     
-    <select id="selectStoresNameById" resultType="String">
+    <select id="selectStoreNameById" resultType="String">
         SELECT name
         FROM es_store
-        WHERE id = #{id}
+        WHERE store_id = #{id}
     </select>
 
 

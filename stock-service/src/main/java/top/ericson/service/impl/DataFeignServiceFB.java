@@ -4,16 +4,16 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import top.ericson.service.ItemFeignService;
+import top.ericson.service.DataFeignService;
 import top.ericson.vo.JsonResult;
 
 
 @Component
-public class ItemFeignServiceFB implements ItemFeignService {
+public class DataFeignServiceFB implements DataFeignService {
 
     /**
      * @author Ericson
-     * @date 2020/04/05 03:03
+     * @date 2020/04/19 17:14
      * @param itemId
      * @return
      * @see top.ericson.service.ItemFeignService#findItemById(java.lang.Integer)
@@ -21,13 +21,12 @@ public class ItemFeignServiceFB implements ItemFeignService {
      */
     @Override
     public JsonResult findItemById(Integer itemId) {
-        System.out.println("ItemFeignServiceFB.findItemById()");
         return null;
     }
 
     /**
      * @author Ericson
-     * @date 2020/04/14 21:57
+     * @date 2020/04/19 17:14
      * @param itemId
      * @return
      * @see top.ericson.service.ItemFeignService#findItemNameById(java.lang.Integer)
@@ -40,7 +39,7 @@ public class ItemFeignServiceFB implements ItemFeignService {
 
     /**
      * @author Ericson
-     * @date 2020/04/14 22:01
+     * @date 2020/04/19 17:14
      * @param idSet
      * @return
      * @see top.ericson.service.ItemFeignService#findItemsNameById(java.util.Set)
@@ -50,5 +49,32 @@ public class ItemFeignServiceFB implements ItemFeignService {
     public JsonResult findItemsNameById(Set<Integer> idSet) {
         return null;
     }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/19 17:14
+     * @param userId
+     * @return
+     * @see top.ericson.service.ItemFeignService#findStoreNameById(java.lang.Integer)
+     * @description 
+     */
+    @Override
+    public JsonResult findStoreNameById(Integer userId) {
+        return null;
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/19 17:14
+     * @param idSet
+     * @return
+     * @see top.ericson.service.ItemFeignService#findStoresNameById(java.util.Set)
+     * @description 
+     */
+    @Override
+    public JsonResult findStoresNameById(Set<Integer> idSet) {
+        return null;
+    }
+
 
 }

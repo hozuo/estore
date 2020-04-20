@@ -1,8 +1,9 @@
 package top.ericson.service;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import top.ericson.pojo.Instock;
+import top.ericson.vo.PageQuery;
 import top.ericson.vo.info.InstockInfo;
 
 /**
@@ -16,23 +17,12 @@ public interface InstockService {
 
     /**
      * @author Ericson
-     * @date 2020/03/31 20:39
-     * @param page
-     * @param rows
-     * @return
-     * @description 
-     */
-    List<Instock> findInstockByPage(Integer page, Integer rows, String orderBy, String orderType,
-        List<Integer> inIdList, List<Integer> itemIdList);
-
-    /**
-     * @author Ericson
      * @date 2020/04/05 00:45
      * @param inStockId
      * @return
      * @description 
      */
-    Instock findInstockById(String inStockId);
+    Instock findById(String inStockId);
 
     /**
      * @author Ericson
@@ -44,43 +34,11 @@ public interface InstockService {
 
     /**
      * @author Ericson
-     * @date 2020/04/08 20:54
-     * @param orderBy
-     * @param orderType
-     * @param inIdList
-     * @param itemIdList
-     * @return
-     * @description 
-     */
-    Integer selectCount(String orderBy, String orderType, List<Integer> inIdList, List<Integer> itemIdList);
-
-    /**
-     * @author Ericson
-     * @date 2020/04/08 21:53
-     * @param inSn
-     * @param storeId
-     * @param userId
-     * @param itemId
-     * @param buyId
-     * @param inState
-     * @param num
-     * @param inTime
-     * @param stock
-     * @param createTime
-     * @param createUser
-     * @param updateTime
-     * @param updateUser
-     * @description 
-     */
-    Integer createInstock(Instock instock);
-
-    /**
-     * @author Ericson
      * @date 2020/04/09 00:46
      * @param inId
      * @description 
      */
-    Integer deleteInstockById(Integer inId);
+    Integer deleteById(Integer inId);
 
     /**
      * @author Ericson
@@ -89,7 +47,7 @@ public interface InstockService {
      * @return
      * @description 
      */
-    Integer createInstock(InstockInfo instockInfo);
+    Integer create(InstockInfo instockInfo);
 
     /**
      * @author Ericson
@@ -98,5 +56,23 @@ public interface InstockService {
      * @return
      * @description 
      */
-    Integer updateInstock(InstockInfo instockInfo);
+    Integer update(InstockInfo instockInfo);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 17:43
+     * @param pageQuery
+     * @return
+     * @description 
+     */
+    IPage<Instock> findPage(PageQuery pageQuery);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/17 17:55
+     * @param instock
+     * @return
+     * @description 
+     */
+    Integer create(Instock instock);
 }
