@@ -3,7 +3,11 @@ package top.ericson.service;
 import java.util.Map;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+
+import top.ericson.pojo.Item;
 import top.ericson.pojo.User;
+import top.ericson.vo.PageQuery;
 
 /**
  * @author Ericson
@@ -60,5 +64,14 @@ public interface UserService {
      * @description 
      */
     User findByName(String username);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/28 16:10
+     * @param pageQuery
+     * @return
+     * @description 
+     */
+    IPage<User> findPage(PageQuery pageQuery);
 
 }

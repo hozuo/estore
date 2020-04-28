@@ -33,8 +33,10 @@ public class PageQuery {
      * @description 校验pageQuery的合法性
      */
     public Boolean cheak(Class<?> cls) {
-        // name为空跳过检查
-        if (name == null) {
+        if (pageCurrent < 1 || pageSize < 1) {
+            return false;
+        }
+        if (orderBy == null) {
             return true;
         }
         // 检查name是否与字段名匹配

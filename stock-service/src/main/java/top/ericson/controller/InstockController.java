@@ -1,6 +1,5 @@
 package top.ericson.controller;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +67,7 @@ public class InstockController {
         // 使线程可见,拦截器可以获得请求头中的token
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         JsonResult itemJson = dataService.findItemById(instockInfo.getItemId());
-        if (Integer.parseInt(itemJson.getCode()) != 200) {
+        if (Integer.parseInt(itemJson.getStatus()) != 200) {
             return JsonResult.msg("商品校验失败");
         }
 
@@ -102,7 +101,7 @@ public class InstockController {
         // 使线程可见,拦截器可以获得请求头中的token
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         JsonResult itemJson = dataService.findItemById(instockInfo.getItemId());
-        if (Integer.parseInt(itemJson.getCode()) != 200) {
+        if (Integer.parseInt(itemJson.getStatus()) != 200) {
             return JsonResult.msg("商品校验失败");
         }
 
@@ -167,6 +166,7 @@ public class InstockController {
         userIdSet.add(instock.getCreateUser());
 
         JsonResult nameMapResult = userService.findUsersNameById(userIdSet);
+        @SuppressWarnings("unchecked")
         Map<String, String> nameMap = (Map<String, String>)nameMapResult.getData();
 
         // 返回info

@@ -1,5 +1,7 @@
 package top.ericson.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ public class Supplier extends BasePojo {
     
     private static final long serialVersionUID = 6576795828361767182L;
 
+    @TableId(type = IdType.AUTO)
     private Integer supplierId;
 
     private String name;

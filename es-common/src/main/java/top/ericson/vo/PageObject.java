@@ -9,8 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import top.ericson.pojo.Store;
-import top.ericson.vo.info.StoreInfo;
 
 /**
  * @author Ericson

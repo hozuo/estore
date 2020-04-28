@@ -1,9 +1,12 @@
 package top.ericson.controller;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +25,10 @@ import top.ericson.pojo.User;
 import top.ericson.service.UserService;
 import top.ericson.util.JwtUtilPrivate;
 import top.ericson.vo.JsonResult;
+import top.ericson.vo.PageObject;
+import top.ericson.vo.PageQuery;
 import top.ericson.vo.ResultCode;
-import top.ericson.vo.template.UserTemplate;
+import top.ericson.vo.info.UserInfo;
 
 /**
  * @author Ericson
@@ -62,6 +69,7 @@ public class UserController {
      */
     @RequestMapping("/user/login")
     @ResponseBody
+    @CrossOrigin(origins = "*",maxAge = 3600)
     public JsonResult doLogin(String username, String password, boolean isRememberMe) {
         /*TODO 验证用户名密码是否正确*/
         User user = userService.findByName(username);
@@ -104,32 +112,32 @@ public class UserController {
     /**
      * @author Ericson
      * @date 2020/04/15 15:08
-     * @param userTemplate
+     * @param userInfo
      * @return
      * @description 注册
      */
     @PostMapping("/user/register")
-    public JsonResult createUser(UserTemplate userTemplate) {
-        log.debug("userTemplate:{}", userTemplate);
+    public JsonResult createUser(UserInfo userInfo) {
+        log.debug("userTemplate:{}", userInfo);
         /*数据校验*/
-        boolean flag1 = userService.checkUser(userTemplate.getUsername(), 1);
+        boolean flag1 = userService.checkUser(userInfo.getUsername(), 1);
         if (!flag1) {
             ServiceException e = new ServiceException("前端校验失效,传入非法用户名");
             return JsonResult.exce(e);
         }
-        boolean flag2 = userService.checkUser(userTemplate.getPhone(), 2);
+        boolean flag2 = userService.checkUser(userInfo.getPhone(), 2);
         if (!flag2) {
             ServiceException e = new ServiceException("前端校验失效,传入非法电话号码");
             return JsonResult.exce(e);
         }
-        boolean flag3 = userService.checkUser(userTemplate.getEmail(), 3);
+        boolean flag3 = userService.checkUser(userInfo.getEmail(), 3);
         if (!flag3) {
             ServiceException e = new ServiceException("前端校验失效,传入非法email");
             return JsonResult.exce(e);
         }
         /*写入用户*/
-        userService.createUser(userTemplate.getUsername(), userTemplate.getPassword(), userTemplate.getEmail(),
-            userTemplate.getPhone(), userTemplate.getInvitation());
+        userService.createUser(userInfo.getUsername(), userInfo.getPassword(), userInfo.getEmail(),
+            userInfo.getPhone(), userInfo.getInvitation());
         return JsonResult.success();
     }
     
@@ -146,6 +154,39 @@ public class UserController {
         log.debug("set:{}", idSet);
         Map<Integer, String> itemsNameMap = userService.findNamesById(idSet);
         return JsonResult.success(itemsNameMap);
+    }
+    
+    @GetMapping("/users")
+    public JsonResult findPage(PageQuery pageQuery) {
+        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        // 判断orderBy是否合法
+        if (!pageQuery.cheak(new UserInfo().getClass())) {
+            return JsonResult.build(ResultCode.PARAMS_ERROR);
+        }
+        // 分页查询
+        IPage<User> iPage = userService.findPage(pageQuery);
+        if (iPage == null) {
+            return JsonResult.fail();
+        }
+        // 获得list
+        List<User> userList = iPage.getRecords();
+        if (userList == null) {
+            return JsonResult.fail();
+        }
+        // 构建联合查询集合
+        Set<Integer> idSet = new HashSet<>();
+        for (User s : userList) {
+            idSet.add(s.getUpdateUser());
+            idSet.add(s.getCreateUser());
+        }
+        // 联合查询用户名
+        Map<Integer, String> usernameMap = userService.findNamesById(idSet);
+        // 构造infolist
+        List<UserInfo> supplierInfoList = UserInfo.buildInfoList(userList, usernameMap);
+
+        PageObject<UserInfo> pageObject = new PageObject<UserInfo>(iPage, supplierInfoList);
+
+        return JsonResult.success(pageObject);
     }
 
 }

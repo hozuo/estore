@@ -23,6 +23,7 @@
         <module>es-zull</module>
         <module>item-service</module>
         <module>es-sso</module>
+        <module>order-service</module>
     </modules>
 
     <properties>

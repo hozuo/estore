@@ -28,7 +28,8 @@ import top.ericson.util.JwtUtil;
  */
 @Slf4j
 @Component
-@WebFilter(filterName = "loginFilter", urlPatterns = {"/user/cheak/*", "/item/*", "/instock", "/instocks"})
+@WebFilter(filterName = "loginFilter", urlPatterns = {"/user/cheak/*", "/item/*", "/items/*", "/instock", "/instocks",
+    "/supplier", "/suppliers", "/order", "/orders"})
 public class loginFilter implements Filter {
 
     @Override

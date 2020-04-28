@@ -1,19 +1,14 @@
 package top.ericson.vo.info;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import top.ericson.pojo.Instock;
+import top.ericson.pojo.Supplier;
 
 /**
  * @author Ericson
@@ -28,84 +23,81 @@ import top.ericson.pojo.Instock;
 @NoArgsConstructor
 public class SupplierInfo extends BaseInfo {
 
-    private static final long serialVersionUID = -4587826846673622150L;
+    private static final long serialVersionUID = -2864536785247376458L;
 
-    // 入库流水id
     private Integer id;
-    // 入库流水编号
-    private String sn;
-    // 仓库id
-    private Integer storeId;
-    // 仓库名称
-    private String storeStr;
-    // 入库用户id
-    private Integer userId;
-    // 入库用户名称
-    private String userStr;
-    // 商品id
-    private Integer itemId;
-    // 商品名称
-    private String itemStr;
-    // 采购订单id
-    private String buyId;
-    // 流程状态
-    private Integer inState;
-    // 入库数量
-    private Long num;
-    // 入库时间
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date inTime;
-    // 实时库存(变动前)
-    private Long stock;
+
+    private String name;
+
+    private String address;
+
+    private String manager;
+
+    private String phone;
+
+    private String fax;
+
+    private String remark;
 
     /**
-     * @date 2020/04/14
+     * @date 2020/04/20
      * @author Ericson
-     * @param instock
-     * @description 将pojo对象中的非ID变量赋给info
+     * @param supplier
+     * @description 将pojo对象中的变量赋给info
      */
-    public SupplierInfo(Instock instock) {
-        id = instock.getInId();
-        sn = instock.getInSn();
-        storeId = instock.getStoreId();
-        userId = instock.getUserId();
-        itemId = instock.getItemId();
-        buyId = instock.getBuyId();
-        inState = instock.getInState();
-        num = instock.getNum();
-        inTime = instock.getInTime();
-        stock = instock.getStock();
-        updateTime = instock.getUpdateTime();
-        updateUserId = instock.getUpdateUser();
-        createTime = instock.getCreateTime();
-        createUserId = instock.getCreateUser();
+    public SupplierInfo(Supplier supplier) {
+        id = supplier.getSupplierId();
+        name = supplier.getName();
+        address = supplier.getAddress();
+        manager = supplier.getManager();
+        phone = supplier.getPhone();
+        fax = supplier.getFax();
+        remark = supplier.getRemark();
+
+        updateTime = supplier.getUpdateTime();
+        updateUserId = supplier.getUpdateUser();
+        createTime = supplier.getCreateTime();
+        createUserId = supplier.getCreateUser();
     }
 
     /**
-     * @date 2020/04/14
+     * @date 2020/04/20
      * @author Ericson
      * @param instock
-     * @description 将pojo对象中的非ID变量赋给info
+     * @description 将pojo对象中的变量赋给info
      */
-    public SupplierInfo(Instock instock, Map<String, String> usernameMap) {
-        id = instock.getInId();
-        sn = instock.getInSn();
-        storeId = instock.getStoreId();
-        userId = instock.getUserId();
-        userStr = usernameMap.get(userId.toString());
-        itemId = instock.getItemId();
-        buyId = instock.getBuyId();
-        inState = instock.getInState();
-        num = instock.getNum();
-        inTime = instock.getInTime();
-        stock = instock.getStock();
-        updateTime = instock.getUpdateTime();
-        updateUserId = instock.getUpdateUser();
+    public SupplierInfo(Supplier supplier, Map<String, String> usernameMap) {
+        id = supplier.getSupplierId();
+        name = supplier.getName();
+        address = supplier.getAddress();
+        manager = supplier.getManager();
+        phone = supplier.getPhone();
+        fax = supplier.getFax();
+        remark = supplier.getRemark();
+        updateTime = supplier.getUpdateTime();
+        updateUserId = supplier.getUpdateUser();
         updateUserStr = usernameMap.get(updateUserId.toString());
-        createTime = instock.getCreateTime();
-        createUserId = instock.getCreateUser();
+        createTime = supplier.getCreateTime();
+        createUserId = supplier.getCreateUser();
         createUserStr = usernameMap.get(createUserId.toString());
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/20 16:07
+     * @return
+     * @description 
+     */
+    public Supplier buildPojo() {
+        Supplier supplier = new Supplier();
+        supplier.setSupplierId(id)
+            .setName(name)
+            .setAddress(address)
+            .setManager(manager)
+            .setPhone(phone)
+            .setFax(fax)
+            .setRemark(remark);
+        return supplier;
     }
 
     /**
@@ -117,30 +109,31 @@ public class SupplierInfo extends BaseInfo {
      */
     public boolean cheak() {
         // true:任意对象为null
-        boolean cheakNullflag = this.getSn() != null && this.getStoreId() != null && this.getUserId() != null
-            && this.getItemId() != null && this.getBuyId() != null && this.getInState() != null && this.getNum() != null
-            && this.getInTime() != null && this.getStock() != null;
+        boolean cheakNullflag =
+            name != null && address != null && manager != null && phone != null && fax != null && remark != null;
         return cheakNullflag;
     }
 
-    public static List<SupplierInfo> buildInfoList(List<Instock> instockList, Map<String, String> usernameMap,
-        Map<String, String> itemsNameMap, Map<String, String> storesNameMap) {
+    /**
+     * @author Ericson
+     * @date 2020/04/20 15:09
+     * @param supplierList
+     * @param usernameMap
+     * @return List<SupplierInfo>
+     * @description 很多构造函数
+     */
+    public static List<SupplierInfo> buildInfoList(List<Supplier> supplierList, Map<String, String> usernameMap) {
         List<SupplierInfo> infoList = new ArrayList<SupplierInfo>();
         SupplierInfo info;
-        for (Instock i : instockList) {
-            info = new SupplierInfo(i);
-            info.setUserStr(usernameMap.get(info.getUserId()
+        for (Supplier s : supplierList) {
+            info = new SupplierInfo(s);
+            info.setUpdateUserStr(usernameMap.get(info.getUpdateUserId()
                 .toString()))
-                .setItemStr(itemsNameMap.get(info.getItemId()
-                    .toString()))
-                .setStoreStr(storesNameMap.get(info.getStoreId()
-                    .toString()))
-                .setUpdateUserStr(usernameMap.get(info.getUpdateUserId()
-                    .toString()))
                 .setCreateUserStr(usernameMap.get(info.getCreateUserId()
                     .toString()));
             infoList.add(info);
         }
         return infoList;
     }
+
 }

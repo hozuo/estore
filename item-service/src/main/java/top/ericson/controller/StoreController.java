@@ -130,6 +130,7 @@ public class StoreController {
         idSet.add(store.getManager());
         idSet.add(store.getUpdateUser());
         idSet.add(store.getCreateUser());
+        @SuppressWarnings("unchecked")
         Map<String, String> nameMap = (Map<String, String>)userService.findUsersNameById(idSet)
             .getData();
         StoreInfo storeInfo = new StoreInfo(store, nameMap);

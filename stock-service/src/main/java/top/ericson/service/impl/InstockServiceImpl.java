@@ -41,7 +41,7 @@ public class InstockServiceImpl implements InstockService {
      * @param inStockId
      * @return
      * @see top.ericson.service.InstockService#findInStockById(java.lang.String)
-     * @description 
+     * @description 查
      */
     @Override
     public Instock findById(String inStockId) {
@@ -53,7 +53,7 @@ public class InstockServiceImpl implements InstockService {
      * @date 2020/04/08 20:55
      * @return
      * @see top.ericson.service.InstockService#selectCount()
-     * @description 
+     * @description 查数量
      */
     @Override
     public Integer selectCount() {
@@ -64,7 +64,7 @@ public class InstockServiceImpl implements InstockService {
      * @author Ericson
      * @date 2020/04/08 23:26
      * @see top.ericson.service.InstockService#createInstock(java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.Integer, java.lang.Long, java.util.Date, java.lang.Long, java.util.Date, java.lang.Integer, java.util.Date, java.lang.Integer)
-     * @description 使用pojo创建instock
+     * @description 增
      */
     @Override
     public Integer create(Instock instock) {
@@ -82,7 +82,7 @@ public class InstockServiceImpl implements InstockService {
      * @date 2020/04/09 00:46
      * @param inId
      * @see top.ericson.service.InstockService#deleteInstockById(java.lang.Integer)
-     * @description 
+     * @description 删
      */
     @Override
     public Integer deleteById(Integer inId) {
@@ -95,7 +95,7 @@ public class InstockServiceImpl implements InstockService {
      * @param instockInfo
      * @return
      * @see top.ericson.service.InstockService#create(top.ericson.vo.info.InstockInfo)
-     * @description 使用info创建instock
+     * @description 增
      */
     @Override
     public Integer create(InstockInfo instockInfo) {
@@ -110,7 +110,7 @@ public class InstockServiceImpl implements InstockService {
      * @param instockInfo
      * @return
      * @see top.ericson.service.InstockService#updateInstock(top.ericson.vo.info.InstockInfo)
-     * @description 更新入库流水
+     * @description 改
      */
     @Override
     public Integer update(InstockInfo instockInfo) {
@@ -127,7 +127,7 @@ public class InstockServiceImpl implements InstockService {
      * @param pageQuery
      * @return
      * @see top.ericson.service.InstockService#findPage(top.ericson.vo.PageQuery)
-     * @description 
+     * @description 查
      */
     @Override
     public IPage<Instock> findPage(PageQuery pageQuery) {

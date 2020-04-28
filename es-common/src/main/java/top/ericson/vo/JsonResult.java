@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JsonResult {
-    private String code;
-    private String message;
+    private String status;
+    private String msg;
     private Object data;
 
     /**只返回成功信息*/

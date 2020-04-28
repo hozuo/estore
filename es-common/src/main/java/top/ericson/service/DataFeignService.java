@@ -32,8 +32,13 @@ public interface DataFeignService {
     @GetMapping("/item/{id}/name")
     public JsonResult findItemNameById(@PathVariable("id") Integer itemId);
 
+    @GetMapping("/items/search")
+    public JsonResult searchItems(@RequestParam("id") Set<Integer> idSet);
+    
     @GetMapping("/items/search/name")
     public JsonResult findItemsNameById(@RequestParam("id") Set<Integer> idSet);
+    
+    
     /**
      * @author Ericson
      * @date 2020/04/19
@@ -53,4 +58,10 @@ public interface DataFeignService {
      */
     @GetMapping("/stores/search/name")
     public JsonResult findStoresNameById(@RequestParam(value = "id") Set<Integer> idSet);
+    
+    @GetMapping("/supplier/{id}/name")
+    JsonResult findSupplierNameById(@PathVariable("id") Integer id);
+    
+    @GetMapping("/suppliers/search/name")
+    public JsonResult findSuppliersNameById(@RequestParam("id") Set<Integer> idSet);
 }

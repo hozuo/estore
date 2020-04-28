@@ -1,7 +1,6 @@
 package top.ericson.mapper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -28,17 +27,6 @@ public interface StoreMapper extends BaseMapper<Store> {
      * @description
      */
     int getRowCount(String name);
-
-    /**
-     * @author Ericson
-     * @date 2020/04/16 19:40
-     * @param startIndex
-     * @param pageSize
-     * @param name
-     * @return
-     * @description 分页查询
-     */
-    List<Store> findPageObjects(Integer start, Integer rows, String orderBy, String orderType, String name);
 
     /**
      * @author Ericson

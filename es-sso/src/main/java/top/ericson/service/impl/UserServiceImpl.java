@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.mapper.UserMapper;
 import top.ericson.pojo.User;
 import top.ericson.service.UserService;
+import top.ericson.vo.PageQuery;
 
 @Slf4j
 @Service
@@ -106,5 +109,28 @@ public class UserServiceImpl implements UserService {
         queryWrapper.eq("username", username);
         User user = userMapper.selectOne(queryWrapper);
         return user;
+    }
+    
+    @Override
+    public IPage<User> findPage(PageQuery pageQuery) {
+
+        /*开启分页查询*/
+        Page<User> page = new Page<>(pageQuery.getPageCurrent(), pageQuery.getPageSize());
+        log.debug("page:{}", page);
+
+        /*条件构造器*/
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        // 名称查询
+        if (pageQuery.getName() != null) {
+            queryWrapper.like("name", pageQuery.getName());
+        }
+        // 排序
+        if (pageQuery.getOrderBy() != null) {
+            queryWrapper.orderBy(true, pageQuery.getIsASC(), pageQuery.getOrderBy());
+        }
+
+        IPage<User> iPage = userMapper.selectPage(page, queryWrapper);
+        log.debug("iPage:{}", iPage);
+        return iPage;
     }
 }
