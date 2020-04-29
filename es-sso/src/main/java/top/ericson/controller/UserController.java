@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.exception.ServiceException;
-import top.ericson.mapper.UserMapper;
 import top.ericson.pojo.User;
+import top.ericson.service.RoleService;
 import top.ericson.service.UserService;
 import top.ericson.util.JwtUtilPrivate;
 import top.ericson.vo.JsonResult;
@@ -45,6 +45,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     /**
      * @author Ericson
@@ -180,6 +183,14 @@ public class UserController {
         }
     }
 
+    /**
+     * @author Ericson
+     * @date 2020/04/29 18:32
+     * @param id
+     * @param valid
+     * @return
+     * @description 更新用户状态
+     */
     @PutMapping("/user/{id}/valid/{valid}")
     public JsonResult updateValidById(@PathVariable Integer id, @PathVariable Integer valid) {
         User user = new User();
@@ -208,6 +219,13 @@ public class UserController {
         return JsonResult.success(itemsNameMap);
     }
 
+    /**
+     * @author Ericson
+     * @date 2020/04/29 18:32
+     * @param pageQuery
+     * @return
+     * @description 分页查询
+     */
     @GetMapping("/users")
     public JsonResult findPage(PageQuery pageQuery) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
@@ -224,15 +242,18 @@ public class UserController {
             return JsonResult.fail();
         }
         // 构建联合查询集合
-        Set<Integer> idSet = new HashSet<>();
+        Set<Integer> userIdSet = new HashSet<>();
+        Set<Integer> roleIdSet = new HashSet<>();
         for (User s : userList) {
-            idSet.add(s.getUpdateUser());
-            idSet.add(s.getCreateUser());
+            userIdSet.add(s.getUpdateUser());
+            userIdSet.add(s.getCreateUser());
+            roleIdSet.add(s.getRoleId());
         }
-        // 联合查询用户名
-        Map<Integer, String> usernameMap = userService.findNamesById(idSet);
+        // 联合查询
+        Map<Integer, String> usernameMap = userService.findNamesById(userIdSet);
+        Map<Integer, String> rolenameMap = roleService.findNamesById(roleIdSet);
         // 构造infolist
-        List<UserInfo> userInfoList = UserInfo.buildInfoList(userList, usernameMap);
+        List<UserInfo> userInfoList = UserInfo.buildInfoList(userList, usernameMap, rolenameMap);
 
         PageObject<UserInfo> pageObject = new PageObject<UserInfo>(iPage, userInfoList);
 

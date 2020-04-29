@@ -22,6 +22,10 @@ public class UserInfo extends BaseInfo {
 
     private String username;
 
+    private Integer roleId;
+
+    private String rolename;
+
     private String salt;
 
     private String password;
@@ -36,6 +40,7 @@ public class UserInfo extends BaseInfo {
 
     public UserInfo(User user) {
         userId = user.getUserId();
+        roleId = user.getRoleId();
         username = user.getUsername();
         password = user.getPassword();
         email = user.getEmail();
@@ -48,12 +53,14 @@ public class UserInfo extends BaseInfo {
         createUserId = user.getCreateUser();
     }
 
-    public static List<UserInfo> buildInfoList(List<User> userList, Map<Integer, String> usernameMap) {
+    public static List<UserInfo> buildInfoList(List<User> userList, Map<Integer, String> usernameMap,
+        Map<Integer, String> rolenameMap) {
         List<UserInfo> infoList = new ArrayList<UserInfo>();
         UserInfo info;
         for (User u : userList) {
             info = new UserInfo(u);
-            info.setUpdateUserStr(usernameMap.get(info.getUpdateUserId()))
+            info.setRolename(rolenameMap.get(info.getRoleId()))
+                .setUpdateUserStr(usernameMap.get(info.getUpdateUserId()))
                 .setCreateUserStr(usernameMap.get(info.getCreateUserId()));
             infoList.add(info);
         }
@@ -67,6 +74,8 @@ public class UserInfo extends BaseInfo {
         switch (orderBy) {
             case "userId":
                 return "user_id";
+            case "roleId":
+                return "role_id";
             case "username":
                 return "username";
             case "email":
@@ -92,7 +101,8 @@ public class UserInfo extends BaseInfo {
 
     public User BuildPojo() {
         User user = new User();
-        user.setPassword(password)
+        user.setRoleId(roleId)
+            .setPassword(password)
             .setSalt(salt)
             .setUsername(username)
             .setEmail(email)

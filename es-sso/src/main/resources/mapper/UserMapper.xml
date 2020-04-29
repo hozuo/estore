@@ -17,7 +17,7 @@
             </if>
         </where>
     </select>
-    
+
     <select id="selectUserNameById" resultType="String">
         SELECT username
         FROM sys_user

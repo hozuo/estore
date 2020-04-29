@@ -43,7 +43,6 @@ management:
 
 #引入日志
 logging:
-  pattern:    console: "%d - %msg%n"
   level:
     top.ericson: debug
     top.ericson.mapper: debug

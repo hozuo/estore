@@ -21,6 +21,8 @@ public class User extends BasePojo {
 
     private Integer empId;
 
+    private Integer roleId;
+
     private String username;
 
     private String password;

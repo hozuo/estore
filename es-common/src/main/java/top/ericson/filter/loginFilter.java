@@ -1,7 +1,6 @@
 package top.ericson.filter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,49 +28,57 @@ import top.ericson.util.JwtUtil;
  */
 @Slf4j
 @Component
-@WebFilter( filterName = "loginFilter", urlPatterns = {"/*"})
+@WebFilter(filterName = "loginFilter", urlPatterns = {"/*"})
 public class loginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
         throws IOException, ServletException {
-        System.out.println("loginFilter.doFilter()");
+        log.debug("loginFilter.doFilter()");
         HttpServletResponse response = (HttpServletResponse)servletResponse;
         HttpServletRequest request = (HttpServletRequest)servletRequest;
 
-        String path = request.getRequestURI().substring(request.getContextPath().length()).replaceAll("[/]+$", "");
+        String path = request.getRequestURI()
+            .substring(request.getContextPath()
+                .length())
+            .replaceAll("[/]+$", "");
         log.debug("path:{}", path);
         String allowedPath = "/user/login";
- 
+
+        // 判断是否需要登录
         if (allowedPath.equals(path)) {
-            System.out.println("这里是不需要处理的url进入的方法");
+            log.debug("不校验token");
             chain.doFilter(request, response);
-        }
-        
-        String jwt = request.getHeader("token");
-        log.debug("jwt:{}", jwt);
-        if (jwt == null || "".equals(jwt)) {
-            log.debug("token为null");
-            response.setStatus(600);
-            response.setCharacterEncoding("utf-8");
-            response.getWriter().write("{\"status\": \"600\",\"msg\": \"用户未登录\",\"data\": null}");
             return;
-        }
-        Jws<Claims> jws = JwtUtil.build()
-            .cheakJwt(jwt);
-        if (jws != null) {
-            User user = JwtUtil.build()
-                .perseJwt(jws);
-            log.debug("user:{}", user);
-            request.setAttribute("userId", user.getUserId());
-            request.setAttribute("username", user.getUsername());
-            chain.doFilter(servletRequest, servletResponse);
         } else {
-            log.debug("token验证失败");
-            response.setStatus(600);
-            response.setCharacterEncoding("utf-8");
-            response.getWriter().write("{\"status\": \"600\",\"msg\": \"登录信息验证失败\",\"data\": null}");
-            return;
+            String jwt = request.getHeader("token");
+            log.debug("jwt:{}", jwt);
+            if (jwt == null || "".equals(jwt)) {
+                log.debug("token为null");
+                response.setStatus(600);
+                response.setCharacterEncoding("utf-8");
+                response.getWriter()
+                    .write("{\"status\": \"600\",\"msg\": \"用户未登录\",\"data\": null}");
+                return;
+            }
+            Jws<Claims> jws = JwtUtil.build()
+                .cheakJwt(jwt);
+            if (jws != null) {
+                User user = JwtUtil.build()
+                    .perseJwt(jws);
+                log.debug("user:{}", user);
+                request.setAttribute("userId", user.getUserId());
+                request.setAttribute("username", user.getUsername());
+                chain.doFilter(servletRequest, servletResponse);
+            } else {
+                log.debug("token验证失败");
+                response.setStatus(600);
+                response.setCharacterEncoding("utf-8");
+                response.getWriter()
+                    .write("{\"status\": \"600\",\"msg\": \"登录信息验证失败\",\"data\": null}");
+                return;
+            }
         }
+
     }
 }
