@@ -20,13 +20,13 @@ public class RoleInfo extends BaseInfo {
 
     private Integer roleId;
 
-    private String name;
+    private String rolename;
 
     private String remark;
 
     public RoleInfo(Role role) {
         roleId = role.getRoleId();
-        name = role.getRolename();
+        rolename = role.getRolename();
         remark = role.getRemark();
         updateTime = role.getUpdateTime();
         updateUserId = role.getUpdateUser();
@@ -53,7 +53,7 @@ public class RoleInfo extends BaseInfo {
     public Role BuildPojo() {
         Role role = new Role();
         role.setRoleId(roleId)
-            .setRolename(name)
+            .setRolename(rolename)
             .setRemark(remark);
         return role;
     }
