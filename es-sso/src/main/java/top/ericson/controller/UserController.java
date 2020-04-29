@@ -6,10 +6,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.exception.ServiceException;
+import top.ericson.mapper.UserMapper;
 import top.ericson.pojo.User;
 import top.ericson.service.UserService;
 import top.ericson.util.JwtUtilPrivate;
@@ -57,7 +59,7 @@ public class UserController {
         String userName = userService.findNameById(userId);
         return JsonResult.success(userName);
     }
-    
+
     /**
      * @author Ericson
      * @date 2020/04/15 15:14
@@ -69,10 +71,12 @@ public class UserController {
      */
     @RequestMapping("/user/login")
     @ResponseBody
-    @CrossOrigin(origins = "*",maxAge = 3600)
     public JsonResult doLogin(String username, String password, boolean isRememberMe) {
         /*TODO 验证用户名密码是否正确*/
         User user = userService.findByName(username);
+        if (user == null) {
+            return JsonResult.msg("用户名或密码错误");
+        }
         /*创建token*/
         String jwt = JwtUtilPrivate.buildJwt(user.getUserId(), username);
         return JsonResult.success(jwt);
@@ -116,7 +120,7 @@ public class UserController {
      * @return
      * @description 注册
      */
-    @PostMapping("/user/register")
+    @PostMapping("/user")
     public JsonResult createUser(UserInfo userInfo) {
         log.debug("userTemplate:{}", userInfo);
         /*数据校验*/
@@ -136,11 +140,59 @@ public class UserController {
             return JsonResult.exce(e);
         }
         /*写入用户*/
-        userService.createUser(userInfo.getUsername(), userInfo.getPassword(), userInfo.getEmail(),
-            userInfo.getPhone(), userInfo.getInvitation());
+        userService.createUser(userInfo);
         return JsonResult.success();
     }
-    
+
+    /**
+     * @author Ericson
+     * @date 2020/04/29 15:48
+     * @param id
+     * @return
+     * @description 删除用户
+     */
+    @DeleteMapping("/user/{id}")
+    public JsonResult deleteById(@PathVariable(value = "id") Integer id) {
+        Integer deleteNum = userService.deleteById(id);
+        if (deleteNum == 1) {
+            return JsonResult.success("删除一条记录");
+        } else {
+            return JsonResult.fail();
+        }
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/29 16:00
+     * @param id
+     * @param userInfo
+     * @return
+     * @description 更新
+     */
+    @PutMapping("/user/{id}")
+    public JsonResult updateById(@PathVariable(value = "id") Integer id, UserInfo userInfo) {
+        userInfo.setUserId(id);
+        Integer updateNum = userService.updateById(userInfo);
+        if (updateNum == 1) {
+            return JsonResult.success("更新一条记录");
+        } else {
+            return JsonResult.fail();
+        }
+    }
+
+    @PutMapping("/user/{id}/valid/{valid}")
+    public JsonResult updateValidById(@PathVariable Integer id, @PathVariable Integer valid) {
+        User user = new User();
+        user.setUserId(id)
+            .setValid(valid);
+        Integer updateNum = userService.updateValidById(user);
+        if (updateNum == 1) {
+            return JsonResult.success("更新一条记录");
+        } else {
+            return JsonResult.fail();
+        }
+    }
+
     /*复数资源*/
     /**
      * @author Ericson
@@ -155,14 +207,12 @@ public class UserController {
         Map<Integer, String> itemsNameMap = userService.findNamesById(idSet);
         return JsonResult.success(itemsNameMap);
     }
-    
+
     @GetMapping("/users")
     public JsonResult findPage(PageQuery pageQuery) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         // 判断orderBy是否合法
-        if (!pageQuery.cheak(new UserInfo().getClass())) {
-            return JsonResult.build(ResultCode.PARAMS_ERROR);
-        }
+        pageQuery.setOrderBy(UserInfo.orderByCheak(pageQuery.getOrderBy()));
         // 分页查询
         IPage<User> iPage = userService.findPage(pageQuery);
         if (iPage == null) {
@@ -182,9 +232,9 @@ public class UserController {
         // 联合查询用户名
         Map<Integer, String> usernameMap = userService.findNamesById(idSet);
         // 构造infolist
-        List<UserInfo> supplierInfoList = UserInfo.buildInfoList(userList, usernameMap);
+        List<UserInfo> userInfoList = UserInfo.buildInfoList(userList, usernameMap);
 
-        PageObject<UserInfo> pageObject = new PageObject<UserInfo>(iPage, supplierInfoList);
+        PageObject<UserInfo> pageObject = new PageObject<UserInfo>(iPage, userInfoList);
 
         return JsonResult.success(pageObject);
     }

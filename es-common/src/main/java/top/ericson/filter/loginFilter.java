@@ -1,6 +1,7 @@
 package top.ericson.filter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,22 +29,33 @@ import top.ericson.util.JwtUtil;
  */
 @Slf4j
 @Component
-@WebFilter(filterName = "loginFilter", urlPatterns = {"/user/cheak/*", "/item/*", "/items/*", "/instock", "/instocks",
-    "/supplier", "/suppliers", "/order", "/orders"})
+@WebFilter( filterName = "loginFilter", urlPatterns = {"/*"})
 public class loginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
         throws IOException, ServletException {
         System.out.println("loginFilter.doFilter()");
+        HttpServletResponse response = (HttpServletResponse)servletResponse;
         HttpServletRequest request = (HttpServletRequest)servletRequest;
+
+        String path = request.getRequestURI().substring(request.getContextPath().length()).replaceAll("[/]+$", "");
+        log.debug("path:{}", path);
+        String allowedPath = "/user/login";
+ 
+        if (allowedPath.equals(path)) {
+            System.out.println("这里是不需要处理的url进入的方法");
+            chain.doFilter(request, response);
+        }
+        
         String jwt = request.getHeader("token");
         log.debug("jwt:{}", jwt);
         if (jwt == null || "".equals(jwt)) {
             log.debug("token为null");
-            HttpServletResponse response = (HttpServletResponse)servletResponse;
-            response.sendRedirect("/user/login");
-            chain.doFilter(servletRequest, servletResponse);
+            response.setStatus(600);
+            response.setCharacterEncoding("utf-8");
+            response.getWriter().write("{\"status\": \"600\",\"msg\": \"用户未登录\",\"data\": null}");
+            return;
         }
         Jws<Claims> jws = JwtUtil.build()
             .cheakJwt(jwt);
@@ -56,9 +68,10 @@ public class loginFilter implements Filter {
             chain.doFilter(servletRequest, servletResponse);
         } else {
             log.debug("token验证失败");
-            HttpServletResponse httpServletResponse = (HttpServletResponse)servletResponse;
-            httpServletResponse.sendRedirect("/user/login");
-            chain.doFilter(servletRequest, servletResponse);
+            response.setStatus(600);
+            response.setCharacterEncoding("utf-8");
+            response.getWriter().write("{\"status\": \"600\",\"msg\": \"登录信息验证失败\",\"data\": null}");
+            return;
         }
     }
 }

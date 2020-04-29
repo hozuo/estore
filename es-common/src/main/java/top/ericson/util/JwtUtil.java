@@ -62,7 +62,7 @@ public class JwtUtil {
                 .parseClaimsJws(jwt);
         } catch (JwtException e) {
             e.printStackTrace();
-            log.debug("验证失败");
+            log.debug("jwt验证失败");
             return null;
         }
         return jws;
@@ -80,7 +80,7 @@ public class JwtUtil {
             log.debug("username:{}", username);
         } catch (Exception e) {
             e.printStackTrace();
-            log.debug("解析失败");
+            log.debug("jwt解析失败");
             return null;
         }
 

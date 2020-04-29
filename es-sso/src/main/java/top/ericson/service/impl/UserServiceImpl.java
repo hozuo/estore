@@ -1,9 +1,12 @@
 package top.ericson.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import top.ericson.mapper.UserMapper;
 import top.ericson.pojo.User;
 import top.ericson.service.UserService;
 import top.ericson.vo.PageQuery;
+import top.ericson.vo.info.UserInfo;
 
 @Slf4j
 @Service
@@ -24,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    HttpServletRequest request;
 
     /**
      * @author Ericson
@@ -39,9 +46,9 @@ public class UserServiceImpl implements UserService {
         String column = (type == 1 ? "username" : (type == 2 ? "phone" : "email"));
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
         queryWrapper.eq(column, param);
-        int count = userMapper.selectCount(queryWrapper);
-        // 有数据 true 没有 false
-        return (count > 0 ? true : false);
+        List<User> selectList = userMapper.selectList(queryWrapper);
+        // 有数据 false 没有 true
+        return selectList.isEmpty();
     }
 
     /**
@@ -56,13 +63,16 @@ public class UserServiceImpl implements UserService {
      * @description 
      */
     @Override
-    public void createUser(String username, String password, String email, String phone, String invitation) {
-        User user = new User();
-
-        user.setUsername(username)
-            .setEmail(email)
-            .setPhone(phone)
-            .setInvitation(invitation);
+    public void createUser(UserInfo userInfo) {
+        User user = userInfo.BuildPojo();
+        Integer userId = (Integer)request.getAttribute("userId");
+        log.debug("userId:{}", userId);
+        Date now = new Date();
+        user.setCreateTime(now)
+            .setCreateUser(userId)
+            .setUpdateTime(now)
+            .setUpdateUser(userId);
+        userMapper.insert(user);
     }
 
     /**
@@ -105,12 +115,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User findByName(String username) {
-        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
         User user = userMapper.selectOne(queryWrapper);
         return user;
     }
-    
+
     @Override
     public IPage<User> findPage(PageQuery pageQuery) {
 
@@ -120,12 +130,14 @@ public class UserServiceImpl implements UserService {
 
         /*条件构造器*/
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        log.debug(pageQuery.getName());
+
         // 名称查询
         if (pageQuery.getName() != null) {
-            queryWrapper.like("name", pageQuery.getName());
+            queryWrapper.like("username", pageQuery.getName());
         }
         // 排序
-        if (pageQuery.getOrderBy() != null) {
+        if (pageQuery.getOrderBy() != null && !"".equals(pageQuery.getOrderBy())) {
             queryWrapper.orderBy(true, pageQuery.getIsASC(), pageQuery.getOrderBy());
         }
 
@@ -133,4 +145,53 @@ public class UserServiceImpl implements UserService {
         log.debug("iPage:{}", iPage);
         return iPage;
     }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/29 15:00
+     * @param id
+     * @return
+     * @see top.ericson.service.UserService#deleteById(java.lang.Integer)
+     * @description 
+     */
+    @Override
+    public Integer deleteById(Integer id) {
+        return userMapper.deleteById(id);
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/29 16:01
+     * @param id
+     * @param userInfo
+     * @return
+     * @see top.ericson.service.UserService#updateById(java.lang.Integer, top.ericson.vo.info.UserInfo)
+     * @description 
+     */
+    @Override
+    public Integer updateById(UserInfo userInfo) {
+        User user = userInfo.BuildPojo();
+        user.setUserId(userInfo.getUserId());
+        Integer userId = (Integer)request.getAttribute("userId");
+        user.setUpdateTime(new Date())
+            .setUpdateUser(userId);
+        return userMapper.updateById(user);
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/04/29 17:48
+     * @param user
+     * @return 
+     * @see top.ericson.service.UserService#updateValidById(top.ericson.pojo.User)
+     * @description 
+     */
+    @Override
+    public Integer updateValidById(User user) {
+        Integer userId = (Integer)request.getAttribute("userId");
+        user.setUpdateTime(new Date())
+            .setUpdateUser(userId);
+        return userMapper.updateById(user);
+    }
+
 }

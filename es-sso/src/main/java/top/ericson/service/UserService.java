@@ -5,9 +5,9 @@ import java.util.Set;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
-import top.ericson.pojo.Item;
 import top.ericson.pojo.User;
 import top.ericson.vo.PageQuery;
+import top.ericson.vo.info.UserInfo;
 
 /**
  * @author Ericson
@@ -38,7 +38,7 @@ public interface UserService {
      * @param invitation
      * @description 
      */
-    void createUser(String username, String password, String email, String phone, String invitation);
+    void createUser(UserInfo userInfo);
 
     /**
      * @author Ericson
@@ -73,5 +73,31 @@ public interface UserService {
      * @description 
      */
     IPage<User> findPage(PageQuery pageQuery);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/29 15:00
+     * @param id
+     * @return
+     * @description 
+     */
+    Integer deleteById(Integer id);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/29 15:49
+     * @param id
+     * @return
+     * @description 
+     */
+    Integer updateById(UserInfo userInfo);
+
+    /**
+     * @author Ericson
+     * @date 2020/04/29 17:48
+     * @param user
+     * @description 
+     */
+    Integer updateValidById(User user);
 
 }

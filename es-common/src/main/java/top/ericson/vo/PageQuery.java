@@ -36,7 +36,7 @@ public class PageQuery {
         if (pageCurrent < 1 || pageSize < 1) {
             return false;
         }
-        if (orderBy == null) {
+        if (orderBy == null || "".equals(orderBy)) {
             return true;
         }
         // 检查name是否与字段名匹配
