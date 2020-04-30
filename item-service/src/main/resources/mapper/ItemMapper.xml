@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.ericson.mapper.ItemMapper">
+
+    <sql id="queryWhereName">
+        <where>
+            <if test="name!=null and name!=''">
+                name like concat("%",#{name},"%")
+            </if>
+        </where>
+    </sql>
+
+    <select id="findPageObjects" resultType="Item">
+        SELECT *
+        FROM es_item
+        <include refid="queryWhereName"/>
+        ORDER BY update_time DESC
+        LIMIT #{startIndex}, #{pageSize}
+    </select>
+
+    <select id="getRowCount" resultType="int">
+        select count(*)
+        from es_item
+        <include refid="queryWhereName"/>
+    </select>
+
+    <select id="selectNamesById" resultType="Item">
+        SELECT item_id,name
+        FROM es_item
+        <where>
+            <if test="collection != null and collection">
+                item_id in
+                <foreach collection="collection" item="id" index="index" open="(" separator=","
+                    close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectNameById" resultType="String">
+        SELECT name
+        FROM es_item
+        WHERE id = #{id}
+    </select>
+
+</mapper>

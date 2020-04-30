@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.ericson.mapper.InstockMapper">
+
+    <select id="findInstockByPage" resultType="Instock">
+        SELECT *
+        FROM es_instock
+        <where>
+            <if test="inIdList != null and inIdList.size()>0">
+                in_id in
+                <foreach collection="inIdList" item="inId" index="inId" open="(" separator=","
+                    close=")">
+                    #{inId}
+                </foreach>
+            </if>
+            <if test="itemIdList != null and itemIdList.size()>0">
+                AND
+                item_id in
+                <foreach collection="itemIdList" item="itemId" index="itemId" open="(" separator=","
+                    close=")">
+                    #{itemId}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY ${orderBy} ${orderType}
+        LIMIT #{start}, #{rows}
+    </select>
+
+    <select id="selectCount" resultType="int">
+        SELECT count(*)
+        FROM es_instock
+        <where>
+            <if test="inIdList != null and inIdList.size()>0">
+                in_id in
+                <foreach collection="inIdList" item="inId" index="inId" open="(" separator=","
+                    close=")">
+                    #{inId}
+                </foreach>
+            </if>
+            <if test="itemIdList != null and itemIdList.size()>0">
+                AND
+                item_id in
+                <foreach collection="itemIdList" item="itemId" index="itemId" open="(" separator=","
+                    close=")">
+                    #{itemId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    
+</mapper>
