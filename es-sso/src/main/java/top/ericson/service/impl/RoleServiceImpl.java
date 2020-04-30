@@ -94,7 +94,7 @@ public class RoleServiceImpl implements RoleService {
 
         // 名称查询
         if (pageQuery.getName() != null) {
-            queryWrapper.like("name", pageQuery.getName());
+            queryWrapper.like("rolename", pageQuery.getName());
         }
         // 排序
         if (pageQuery.getOrderBy() != null && !"".equals(pageQuery.getOrderBy())) {
