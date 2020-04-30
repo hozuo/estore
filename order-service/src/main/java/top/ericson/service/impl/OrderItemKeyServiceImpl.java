@@ -22,7 +22,6 @@ import top.ericson.vo.info.OrderItemKeyInfo;
  * @version 1.0
  * @description 采购订单服务
  */
-@Slf4j
 @Service
 public class OrderItemKeyServiceImpl implements OrderItemKeyService {
 
