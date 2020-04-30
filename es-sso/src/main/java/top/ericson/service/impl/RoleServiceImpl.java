@@ -42,13 +42,13 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void create(RoleInfo roleInfo) {
         Role role = roleInfo.BuildPojo();
-        Integer roleId = (Integer)request.getAttribute("userId");
-        log.debug("roleId:{}", roleId);
+        Integer userId = (Integer)request.getAttribute("userId");
+        log.debug("roleId:{}", userId);
         Date now = new Date();
         role.setCreateTime(now)
-            .setCreateUser(roleId)
+            .setCreateUser(userId)
             .setUpdateTime(now)
-            .setUpdateUser(roleId);
+            .setUpdateUser(userId);
         roleMapper.insert(role);
     }
 

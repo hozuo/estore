@@ -53,7 +53,7 @@ public interface RoleService {
      * @description 分页查询
      */
     IPage<Role> findPage(PageQuery pageQuery);
-
+    
     /**
      * @author Ericson
      * @date 2020/04/29 18:46
