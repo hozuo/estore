@@ -10,15 +10,15 @@
         <where>
             <if test="collection != null and collection">
                 menu_id in
-                <foreach collection="collection" item="id" index="index" open="(" separator=","
+                <foreach collection="collection" item="menuId" index="index" open="(" separator=","
                     close=")">
-                    #{id}
+                    #{menuId}
                 </foreach>
             </if>
         </where>
     </select>
     
-    <select id="selectById" resultType="Menu">
+    <select id="selectByIds" resultType="Menu">
         SELECT menu_id,menu_name,parent_id,type
         FROM sys_menu
         <where>

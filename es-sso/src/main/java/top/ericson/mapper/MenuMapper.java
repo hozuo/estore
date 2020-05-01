@@ -28,6 +28,6 @@ public interface MenuMapper extends BaseMapper<Menu> {
      * @return
      * @description 
      */
-    public List<Menu> selectById(Set<Integer> idSet);
+    public List<Menu> selectByIds(Set<Integer> idSet);
     
 }

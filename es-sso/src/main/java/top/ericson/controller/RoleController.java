@@ -89,12 +89,12 @@ public class RoleController {
             menuIdSet.add(key.getMenuId());
         }
         // 联合查询menu
-        List<Menu> menuList = menuService.findById(menuIdSet);
+        List<Menu> menuList = menuService.findByIds(menuIdSet);
         // 构建info的map集合
         Map<Integer, RoleMenuInfo> infoMap = new HashMap<Integer, RoleMenuInfo>();
         for (Menu menu : menuList) {
-            infoMap.put(menu.getMenuId(),
-                new RoleMenuInfo(menu.getMenuId(), menu.getParentId(), menu.getMenuName(), menu.getType(), new ArrayList<>()));
+            infoMap.put(menu.getMenuId(), new RoleMenuInfo(menu.getMenuId(), menu.getParentId(), menu.getMenuName(),
+                menu.getType(), new ArrayList<>()));
         }
         log.debug("infoMap:{}", infoMap);
         // 遍历三级叶子结点
@@ -125,6 +125,62 @@ public class RoleController {
         }
 
         return JsonResult.success(infoList);
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/05/01 23:57
+     * @param roleId
+     * @param menuId
+     * @return
+     * @description 删除用户权限
+     */
+    @DeleteMapping("/role/{roleId}/menus/{menuId}")
+    public JsonResult deleRoleMenuById(@PathVariable Integer roleId, @PathVariable Integer menuId) {
+        // 根据id查询menu
+        Menu menu = menuService.findById(menuId);
+        Integer type = menu.getType();
+        // 删除该节点的记录
+        Integer deleteNum = roleMenuService.delete(new RoleMenuKey(roleId, menuId));
+        if (type == 3) {
+            if (deleteNum == 1) {
+                return JsonResult.success("删除用户权限成功");
+            } else {
+                return JsonResult.msg("删除失败");
+            }
+        }
+        if (type == 2) {
+            List<Menu> menuListType2_3 = menuService.findByParentId(menu.getMenuId());
+            log.debug("menuListType2_3:{}", menuListType2_3);
+            if (menuListType2_3 != null) {
+                // 遍历删除叶子结点
+                for (Menu menu2_3 : menuListType2_3) {
+                    roleMenuService.delete(new RoleMenuKey(roleId, menu2_3.getMenuId()));
+                }
+            }
+            return JsonResult.success("删除用户权限成功");
+        }
+        if (type == 1) {
+            // 查询根节点的二级节点
+            List<Menu> menuListType1_2 = menuService.findByParentId(menu.getMenuId());
+            if (menuListType1_2 != null) {
+                List<Menu> menuListType1_3;
+                // 遍历二级节点
+                for (Menu menu1_2 : menuListType1_2) {
+                    // 查询当前二级节点的叶子结点
+                    menuListType1_3 = menuService.findByParentId(menu1_2.getMenuId());
+                    if (menuListType1_3 != null) {
+                        // 删除全部叶子结点
+                        for (Menu menu1_3 : menuListType1_3) {
+                            roleMenuService.delete(new RoleMenuKey(roleId, menu1_3.getMenuId()));
+                        }
+                    }
+                    // 删除当前二级节点
+                    roleMenuService.delete(new RoleMenuKey(roleId, menu1_2.getMenuId()));
+                }
+            }
+        }
+        return JsonResult.success("删除用户权限成功");
     }
 
     /**

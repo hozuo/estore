@@ -5,7 +5,9 @@ import java.io.Serializable;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Ericson
@@ -15,6 +17,8 @@ import lombok.Data;
  * @description 角色权限关联表
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("sys_role_menu")
 public class RoleMenuKey implements Serializable{
 

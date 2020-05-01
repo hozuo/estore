@@ -130,9 +130,29 @@ public class MenuServiceImpl implements MenuService {
      * @description 
      */
     @Override
-    public List<Menu> findById(Set<Integer> idSet) {
-        List<Menu> menuList = menuMapper.selectById(idSet);
+    public List<Menu> findByIds(Set<Integer> idSet) {
+        List<Menu> menuList = menuMapper.selectByIds(idSet);
         return menuList;
+    }
+
+    @Override
+    public Menu findById(Integer id) {
+        return menuMapper.selectById(id);
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/05/01 23:18
+     * @param parentId
+     * @return
+     * @see top.ericson.service.MenuService#findByParentId(java.lang.Integer)
+     * @description 
+     */
+    @Override
+    public List<Menu> findByParentId(Integer parentId) {
+        QueryWrapper<Menu> wrapper = new QueryWrapper<>();
+        wrapper.eq("parent_id", parentId);
+        return menuMapper.selectList(wrapper);
     }
 
 }

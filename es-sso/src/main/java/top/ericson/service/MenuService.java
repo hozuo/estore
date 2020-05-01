@@ -34,6 +34,16 @@ public interface MenuService {
      */
     Map<Integer, String> findNamesById(Set<Integer> idSet);
     
-    List<Menu> findById(Set<Integer> idSet);
+    List<Menu> findByIds(Set<Integer> idSet);
 
+    Menu findById(Integer id);
+
+    /**
+     * @author Ericson
+     * @date 2020/05/01 23:18
+     * @param parentId
+     * @description 
+     */
+    List<Menu> findByParentId(Integer parentId);
+    
 }
