@@ -4,4 +4,32 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.ericson.mapper.MenuMapper">
 
+    <select id="selectNamesById" resultType="Menu">
+        SELECT menu_id,menu_name
+        FROM sys_menu
+        <where>
+            <if test="collection != null and collection">
+                menu_id in
+                <foreach collection="collection" item="id" index="index" open="(" separator=","
+                    close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectById" resultType="Menu">
+        SELECT menu_id,menu_name,parent_id,type
+        FROM sys_menu
+        <where>
+            <if test="collection != null and collection">
+                menu_id in
+                <foreach collection="collection" item="id" index="index" open="(" separator=","
+                    close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    
 </mapper>

@@ -1,8 +1,11 @@
 package top.ericson.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +21,18 @@ import org.springframework.web.context.request.RequestContextHolder;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import lombok.extern.slf4j.Slf4j;
+import top.ericson.pojo.Menu;
 import top.ericson.pojo.Role;
+import top.ericson.pojo.RoleMenuKey;
+import top.ericson.service.MenuService;
+import top.ericson.service.RoleMenuService;
 import top.ericson.service.RoleService;
 import top.ericson.service.UserService;
 import top.ericson.vo.JsonResult;
 import top.ericson.vo.PageObject;
 import top.ericson.vo.PageQuery;
 import top.ericson.vo.info.RoleInfo;
+import top.ericson.vo.info.RoleMenuInfo;
 
 /**
  * @author Ericson
@@ -39,9 +47,15 @@ public class RoleController {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private RoleMenuService roleMenuService;
+
+    @Autowired
+    private MenuService menuService;
 
     /**
      * @author Ericson
@@ -52,9 +66,65 @@ public class RoleController {
      * TODO redis缓存
      */
     @GetMapping("/role/{id}/name")
-    public JsonResult findroleNameById(@PathVariable("id") Integer roleId) {
+    public JsonResult findRoleNameById(@PathVariable("id") Integer roleId) {
         String roleName = roleService.findNameById(roleId);
         return JsonResult.success(roleName);
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/05/01 17:13
+     * @param roleId
+     * @return
+     * @description 查询一个角色对应的权限列表
+     */
+    @GetMapping("/role/{id}/menus")
+    public JsonResult findRoleMenusById(@PathVariable("id") Integer roleId) {
+        // 查询关联表,获得menuId列表
+        List<RoleMenuKey> keyList = roleMenuService.findByRoleId(roleId);
+        log.debug("keyList:{}", keyList);
+        // 定义联合查询集合
+        Set<Integer> menuIdSet = new HashSet<>();
+        for (RoleMenuKey key : keyList) {
+            menuIdSet.add(key.getMenuId());
+        }
+        // 联合查询menu
+        List<Menu> menuList = menuService.findById(menuIdSet);
+        // 构建info的map集合
+        Map<Integer, RoleMenuInfo> infoMap = new HashMap<Integer, RoleMenuInfo>();
+        for (Menu menu : menuList) {
+            infoMap.put(menu.getMenuId(),
+                new RoleMenuInfo(menu.getMenuId(), menu.getParentId(), menu.getMenuName(), menu.getType(), new ArrayList<>()));
+        }
+        log.debug("infoMap:{}", infoMap);
+        // 遍历三级叶子结点
+        for (Entry<Integer, RoleMenuInfo> entry : infoMap.entrySet()) {
+            if (entry.getValue()
+                .getType() == 3) {
+                infoMap.get(entry.getValue()
+                    .getParentId())
+                    .add(entry.getValue());
+            }
+        }
+        // 遍历二级结点
+        for (Entry<Integer, RoleMenuInfo> entry : infoMap.entrySet()) {
+            if (entry.getValue()
+                .getType() == 2) {
+                infoMap.get(entry.getValue()
+                    .getParentId())
+                    .add(entry.getValue());
+            }
+        }
+        List<RoleMenuInfo> infoList = new ArrayList<>();
+        // 遍历根结点
+        for (Entry<Integer, RoleMenuInfo> entry : infoMap.entrySet()) {
+            if (entry.getValue()
+                .getType() == 1) {
+                infoList.add(entry.getValue());
+            }
+        }
+
+        return JsonResult.success(infoList);
     }
 
     /**

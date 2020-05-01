@@ -17,7 +17,7 @@ public class PageQuery {
     /**当前页码*/
     Integer pageCurrent = 1;
     /**页面行数*/
-    Integer pageSize = 100;
+    Integer pageSize = 100000;
     /**排序字段*/
     String orderBy;
     /**升序降序,默认升序*/

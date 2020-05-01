@@ -1,6 +1,10 @@
 package top.ericson.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +26,7 @@ import top.ericson.vo.PageQuery;
 public class MenuServiceImpl implements MenuService {
 
     @Autowired
-    private MenuMapper nemuMapper;
+    private MenuMapper menuMapper;
 
     @Autowired
     HttpServletRequest request;
@@ -43,7 +47,7 @@ public class MenuServiceImpl implements MenuService {
             .setCreateUser(userId)
             .setUpdateTime(now)
             .setUpdateUser(userId);
-        nemuMapper.insert(menu);
+        menuMapper.insert(menu);
     }
 
     @Override
@@ -64,7 +68,7 @@ public class MenuServiceImpl implements MenuService {
             queryWrapper.orderBy(true, pageQuery.getIsASC(), pageQuery.getOrderBy());
         }
 
-        IPage<Menu> iPage = nemuMapper.selectPage(page, queryWrapper);
+        IPage<Menu> iPage = menuMapper.selectPage(page, queryWrapper);
         return iPage;
     }
 
@@ -78,7 +82,7 @@ public class MenuServiceImpl implements MenuService {
      */
     @Override
     public Integer deleteById(Integer id) {
-        return nemuMapper.deleteById(id);
+        return menuMapper.deleteById(id);
     }
 
     /**
@@ -96,7 +100,39 @@ public class MenuServiceImpl implements MenuService {
         Integer userId = (Integer)request.getAttribute("userId");
         nemu.setUpdateTime(new Date())
             .setUpdateUser(userId);
-        return nemuMapper.updateById(nemu);
+        return menuMapper.updateById(nemu);
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/05/01 17:42
+     * @param idSet
+     * @return
+     * @see top.ericson.service.MenuService#findNamesById(java.util.Set)
+     * @description 
+     */
+    @Override
+    public Map<Integer, String> findNamesById(Set<Integer> idSet) {
+        List<Menu> menuList = menuMapper.selectNamesById(idSet);
+        HashMap<Integer, String> nameMap = new HashMap<Integer, String>();
+        for (Menu menu : menuList) {
+            nameMap.put(menu.getMenuId(), menu.getMenuName());
+        }
+        return nameMap;
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/05/01 17:59
+     * @param idSet
+     * @return
+     * @see top.ericson.service.MenuService#findById(java.util.Set)
+     * @description 
+     */
+    @Override
+    public List<Menu> findById(Set<Integer> idSet) {
+        List<Menu> menuList = menuMapper.selectById(idSet);
+        return menuList;
     }
 
 }

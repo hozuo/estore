@@ -1,5 +1,9 @@
 package top.ericson.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import top.ericson.pojo.Menu;
@@ -21,5 +25,15 @@ public interface MenuService {
     Integer updateById(Menu role);
 
     IPage<Menu> findPage(PageQuery pageQuery);
+    
+    /**
+     * @author Ericson
+     * @date 2020/05/01
+     * @param idSet
+     * @description 
+     */
+    Map<Integer, String> findNamesById(Set<Integer> idSet);
+    
+    List<Menu> findById(Set<Integer> idSet);
 
 }
