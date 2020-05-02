@@ -155,4 +155,16 @@ public class MenuServiceImpl implements MenuService {
         return menuMapper.selectList(wrapper);
     }
 
+    /**
+     * @author Ericson
+     * @date 2020/05/02 19:52
+     * @return
+     * @see top.ericson.service.MenuService#findAll()
+     * @description 
+     */
+    @Override
+    public List<Menu> findAll() {
+        return menuMapper.selectList(null);
+    }
+
 }

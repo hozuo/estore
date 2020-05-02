@@ -17,6 +17,8 @@ public interface RoleMenuService {
     
     Integer delete(RoleMenuKey key);
     
+    Integer deleteByRoleId(Integer roleId);
+    
     List<RoleMenuKey> findByRoleId(Integer roleId);
     
 }

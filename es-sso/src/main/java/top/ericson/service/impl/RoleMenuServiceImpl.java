@@ -67,4 +67,19 @@ public class RoleMenuServiceImpl implements RoleMenuService {
         return roleMenuMapper.selectList(wrapper);
     }
 
+    /**
+     * @author Ericson
+     * @date 2020/05/02 21:26
+     * @param roleId
+     * @return
+     * @see top.ericson.service.RoleMenuService#deleteByRoleId(java.lang.Integer)
+     * @description 删除一个角色的所有权限
+     */
+    @Override
+    public Integer deleteByRoleId(Integer roleId) {
+        QueryWrapper<RoleMenuKey> wrapper = new QueryWrapper<RoleMenuKey>();
+        wrapper.eq("role_id", roleId);
+        return roleMenuMapper.delete(wrapper);
+    }
+
 }

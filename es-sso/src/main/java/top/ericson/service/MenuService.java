@@ -45,5 +45,13 @@ public interface MenuService {
      * @description 
      */
     List<Menu> findByParentId(Integer parentId);
+
+    /**
+     * @author Ericson
+     * @date 2020/05/02 19:52
+     * @return
+     * @description 
+     */
+    List<Menu> findAll();
     
 }

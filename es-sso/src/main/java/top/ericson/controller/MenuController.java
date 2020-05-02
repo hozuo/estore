@@ -1,6 +1,10 @@
 package top.ericson.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,9 +20,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Menu;
 import top.ericson.service.MenuService;
+import top.ericson.service.RoleMenuService;
 import top.ericson.vo.JsonResult;
 import top.ericson.vo.PageObject;
 import top.ericson.vo.PageQuery;
+import top.ericson.vo.info.RoleMenuInfo;
 
 /**
  * @author Ericson
@@ -94,22 +100,64 @@ public class MenuController {
      * @description 分页查询
      */
     @GetMapping("/menus")
-    public JsonResult findPage(PageQuery pageQuery) {
+    public JsonResult findPage(PageQuery pageQuery, String type) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
-        // 分页查询
-        IPage<Menu> iPage = menuService.findPage(pageQuery);
-        if (iPage == null) {
-            return JsonResult.fail();
-        }
-        // 获得list
-        List<Menu> menuList = iPage.getRecords();
-        if (menuList == null) {
-            return JsonResult.fail();
-        }
+        if ("tree".equals(type)) {
+            
+            // 联合查询menu
+            List<Menu> menuList = menuService.findAll();
+            // 构建info的map集合
+            Map<Integer, RoleMenuInfo> infoMap = new HashMap<Integer, RoleMenuInfo>();
+            for (Menu menu : menuList) {
+                infoMap.put(menu.getMenuId(), new RoleMenuInfo(menu.getMenuId(), menu.getParentId(), menu.getMenuName(),
+                    menu.getType(), new ArrayList<>()));
+            }
+            log.debug("infoMap:{}", infoMap);
+            // 遍历三级叶子结点
+            for (Entry<Integer, RoleMenuInfo> entry : infoMap.entrySet()) {
+                if (entry.getValue()
+                    .getType() == 3) {
+                    infoMap.get(entry.getValue()
+                        .getParentId())
+                        .add(entry.getValue());
+                }
+            }
+            // 遍历二级结点
+            for (Entry<Integer, RoleMenuInfo> entry : infoMap.entrySet()) {
+                if (entry.getValue()
+                    .getType() == 2) {
+                    infoMap.get(entry.getValue()
+                        .getParentId())
+                        .add(entry.getValue());
+                }
+            }
+            List<RoleMenuInfo> infoList = new ArrayList<>();
+            // 遍历根结点
+            for (Entry<Integer, RoleMenuInfo> entry : infoMap.entrySet()) {
+                if (entry.getValue()
+                    .getType() == 1) {
+                    infoList.add(entry.getValue());
+                }
+            }
 
-        PageObject<Menu> pageObject = new PageObject<Menu>(iPage, menuList);
+            return JsonResult.success(infoList);
+        } else {
 
-        return JsonResult.success(pageObject);
+            // 分页查询
+            IPage<Menu> iPage = menuService.findPage(pageQuery);
+            if (iPage == null) {
+                return JsonResult.fail();
+            }
+            // 获得list
+            List<Menu> menuList = iPage.getRecords();
+            if (menuList == null) {
+                return JsonResult.fail();
+            }
+
+            PageObject<Menu> pageObject = new PageObject<Menu>(iPage, menuList);
+
+            return JsonResult.success(pageObject);
+        }
     }
 
 }

@@ -185,6 +185,24 @@ public class RoleController {
 
     /**
      * @author Ericson
+     * @date 2020/05/02 21:43
+     * @param roleId
+     * @param menuIdSet
+     * @return
+     * @description 更新用户的权限
+     */
+    @PutMapping("/role/{roleId}/menus")
+    public JsonResult deleRoleMenuById(@PathVariable Integer roleId,@RequestParam("menuId") Set<Integer> menuIdSet) {
+        // 删除该用户的所有权限
+        roleMenuService.deleteByRoleId(roleId);
+        for (Integer menuId : menuIdSet) {
+            roleMenuService.create(new RoleMenuKey(roleId, menuId));
+        }
+        return JsonResult.success("更新用户权限成功");
+    }
+
+    /**
+     * @author Ericson
      * @date 2020/04/29
      * @param roleInfo
      * @return
