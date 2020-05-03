@@ -2,9 +2,13 @@ package top.ericson.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +23,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Menu;
+import top.ericson.pojo.RoleMenuKey;
+import top.ericson.pojo.User;
 import top.ericson.service.MenuService;
 import top.ericson.service.RoleMenuService;
+import top.ericson.service.UserService;
 import top.ericson.vo.JsonResult;
 import top.ericson.vo.PageObject;
 import top.ericson.vo.PageQuery;
@@ -38,7 +45,16 @@ import top.ericson.vo.info.RoleMenuInfo;
 public class MenuController {
 
     @Autowired
+    HttpServletRequest request;
+
+    @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private RoleMenuService roleMenuService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * @author Ericson
@@ -95,22 +111,24 @@ public class MenuController {
     /**
      * @author Ericson
      * @date 2020/04/30
-     * @param pageQuery
+     * @param type 
+     * 默认list,返回分页查询的list结果,可以用于展示权限列表
+     * tree,返回树形遍历的结果,用于展示树形结构的选框
+     * menu,返回当前用户左侧的菜单列表,为最高两级的树形结构
      * @return
      * @description 分页查询
      */
     @GetMapping("/menus")
     public JsonResult findPage(PageQuery pageQuery, String type) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        // 查询树形结构
         if ("tree".equals(type)) {
-            
-            // 联合查询menu
+            // 查询全部menu
             List<Menu> menuList = menuService.findAll();
             // 构建info的map集合
             Map<Integer, RoleMenuInfo> infoMap = new HashMap<Integer, RoleMenuInfo>();
             for (Menu menu : menuList) {
-                infoMap.put(menu.getMenuId(), new RoleMenuInfo(menu.getMenuId(), menu.getParentId(), menu.getMenuName(),
-                    menu.getType(), new ArrayList<>()));
+                infoMap.put(menu.getMenuId(), new RoleMenuInfo(menu));
             }
             log.debug("infoMap:{}", infoMap);
             // 遍历三级叶子结点
@@ -139,7 +157,47 @@ public class MenuController {
                     infoList.add(entry.getValue());
                 }
             }
+            return JsonResult.success(infoList);
+        } else if ("menu".equals(type)) {
+            /*查询当前角色的左侧菜单*/
+            // 获得当前用户id
+            Integer userId = (Integer)request.getAttribute("userId");
+            // 查询当前用户
+            User user = userService.findById(userId);
+            // 查询关联表,获得用户的menuId列表
+            List<RoleMenuKey> keyList = roleMenuService.findByRoleId(user.getRoleId());
+            log.debug("keyList:{}", keyList);
+            // 定义menu联合查询集合
+            Set<Integer> menuIdSet = new HashSet<>();
+            for (RoleMenuKey key : keyList) {
+                menuIdSet.add(key.getMenuId());
+            }
+            // 联合查询menu
+            List<Menu> menuList = menuService.findByIds(menuIdSet);
+            // 构建info返回的map集合
+            Map<Integer, RoleMenuInfo> infoMap = new HashMap<Integer, RoleMenuInfo>();
+            for (Menu menu : menuList) {
+                infoMap.put(menu.getMenuId(), new RoleMenuInfo(menu));
+            }
+            log.debug("infoMap:{}", infoMap);
 
+            // 遍历二级结点
+            for (Entry<Integer, RoleMenuInfo> entry : infoMap.entrySet()) {
+                if (entry.getValue()
+                    .getType() == 2) {
+                    infoMap.get(entry.getValue()
+                        .getParentId())
+                        .add(entry.getValue());
+                }
+            }
+            List<RoleMenuInfo> infoList = new ArrayList<>();
+            // 遍历根结点
+            for (Entry<Integer, RoleMenuInfo> entry : infoMap.entrySet()) {
+                if (entry.getValue()
+                    .getType() == 1) {
+                    infoList.add(entry.getValue());
+                }
+            }
             return JsonResult.success(infoList);
         } else {
 

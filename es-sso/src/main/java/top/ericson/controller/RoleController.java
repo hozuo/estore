@@ -93,8 +93,7 @@ public class RoleController {
         // 构建info的map集合
         Map<Integer, RoleMenuInfo> infoMap = new HashMap<Integer, RoleMenuInfo>();
         for (Menu menu : menuList) {
-            infoMap.put(menu.getMenuId(), new RoleMenuInfo(menu.getMenuId(), menu.getParentId(), menu.getMenuName(),
-                menu.getType(), new ArrayList<>()));
+            infoMap.put(menu.getMenuId(), new RoleMenuInfo(menu));
         }
         log.debug("infoMap:{}", infoMap);
         // 遍历三级叶子结点
@@ -192,7 +191,7 @@ public class RoleController {
      * @description 更新用户的权限
      */
     @PutMapping("/role/{roleId}/menus")
-    public JsonResult deleRoleMenuById(@PathVariable Integer roleId,@RequestParam("menuId") Set<Integer> menuIdSet) {
+    public JsonResult deleRoleMenuById(@PathVariable Integer roleId, @RequestParam("menuId") Set<Integer> menuIdSet) {
         // 删除该用户的所有权限
         roleMenuService.deleteByRoleId(roleId);
         for (Integer menuId : menuIdSet) {

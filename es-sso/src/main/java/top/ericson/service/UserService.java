@@ -99,5 +99,7 @@ public interface UserService {
      * @description 
      */
     Integer updateValidById(User user);
+    
+    User findById(Integer userId);
 
 }

@@ -19,7 +19,7 @@
     </select>
     
     <select id="selectByIds" resultType="Menu">
-        SELECT menu_id,menu_name,parent_id,type
+        SELECT menu_id,menu_name,parent_id,type,sort,url
         FROM sys_menu
         <where>
             <if test="collection != null and collection">

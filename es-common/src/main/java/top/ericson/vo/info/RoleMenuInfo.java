@@ -1,10 +1,12 @@
 package top.ericson.vo.info;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import top.ericson.pojo.Menu;
 
 /**
  * @author Ericson
@@ -24,11 +26,25 @@ public class RoleMenuInfo {
 
     private String menuName;
 
+    private String url;
+
     private Integer type;
+
+    private Integer sort;
 
     private List<RoleMenuInfo> children;
 
     public void add(RoleMenuInfo info) {
         children.add(info);
+    }
+
+    public RoleMenuInfo(Menu menu) {
+        menuId = menu.getMenuId();
+        parentId = menu.getParentId();
+        menuName = menu.getMenuName();
+        url = menu.getUrl();
+        type = menu.getType();
+        sort = menu.getSort();
+        children = new ArrayList<RoleMenuInfo>();
     }
 }

@@ -194,4 +194,17 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateById(user);
     }
 
+    /**
+     * @author Ericson
+     * @date 2020/05/03 18:19
+     * @param userId
+     * @return
+     * @see top.ericson.service.UserService#findById(java.lang.Integer)
+     * @description 
+     */
+    @Override
+    public User findById(Integer userId) {
+        return userMapper.selectById(userId);
+    }
+
 }
