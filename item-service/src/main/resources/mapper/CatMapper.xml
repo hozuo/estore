@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.ericson.mapper.ItemMapper">
+<mapper namespace="top.ericson.mapper.CatMapper">
 
     <sql id="queryWhereName">
         <where>
@@ -12,12 +12,12 @@
         </where>
     </sql>
 
-    <select id="selectNamesById" resultType="Item">
-        SELECT item_id,name
-        FROM es_item
+    <select id="selectNamesById" resultType="Cat">
+        SELECT cat_id,cat_name
+        FROM es_cat
         <where>
             <if test="collection != null and collection">
-                item_id in
+                cat_id in
                 <foreach collection="collection" item="id" index="index" open="(" separator=","
                     close=")">
                     #{id}
@@ -27,9 +27,9 @@
     </select>
 
     <select id="selectNameById" resultType="String">
-        SELECT name
-        FROM es_item
-        WHERE id = #{id}
+        SELECT cat_name
+        FROM es_cat
+        WHERE cat_id = #{id}
     </select>
 
 </mapper>

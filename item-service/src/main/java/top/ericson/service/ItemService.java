@@ -79,5 +79,5 @@ public interface ItemService {
      * @return
      * @description 
      */
-    Object create(ItemInfo itemInfo);
+    Integer create(ItemInfo itemInfo);
 }

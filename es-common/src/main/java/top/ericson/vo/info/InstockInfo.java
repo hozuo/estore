@@ -86,7 +86,7 @@ public class InstockInfo extends BaseInfo {
      * @date 2020/04/14
      * @author Ericson
      * @param instock
-     * @description 将pojo对象中的非ID变量赋给info
+     * @description 将pojo对象中的变量赋给info
      */
     public InstockInfo(Instock instock, Map<String, String> usernameMap) {
         id = instock.getInId();
@@ -143,4 +143,5 @@ public class InstockInfo extends BaseInfo {
         }
         return infoList;
     }
+
 }

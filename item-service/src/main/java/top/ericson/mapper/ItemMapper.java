@@ -14,7 +14,7 @@ import top.ericson.pojo.Item;
  * @class InstockMapper
  * @date 2020/03/31 17:14
  * @version 1.0
- * @description 入库流水mapper
+ * @description 商品mapper
  */
 @Mapper
 public interface ItemMapper extends BaseMapper<Item> {

@@ -41,10 +41,18 @@ public class RoleInfo extends BaseInfo {
         switch (orderBy) {
             case "roleId":
                 return "role_id";
-            case "name":
-                return "name";
+            case "rolename":
+                return "rolename";
             case "remark":
                 return "remark";
+            case "updateUserStr":
+                return "update_user";
+            case "updateTime":
+                return "update_time";
+            case "createUserStr":
+                return "create_user";
+            case "createTime":
+                return "create_time";
             default:
                 return null;
         }
