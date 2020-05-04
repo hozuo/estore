@@ -83,9 +83,7 @@ public class CatServiceImpl implements CatService {
         Cat cat = catInfo.buildPojo();
         Integer userId = (Integer)request.getAttribute("userId");
         Date now = new Date();
-        cat.setCreateTime(now)
-            .setCreateUser(userId)
-            .setUpdateTime(now)
+        cat.setUpdateTime(now)
             .setUpdateUser(userId);
         return catMapper.updateById(cat);
     }

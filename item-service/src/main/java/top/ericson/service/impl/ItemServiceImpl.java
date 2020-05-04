@@ -117,7 +117,12 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public Integer update(ItemInfo info) {
-        return itemMapper.updateById(info.buildPojo());
+        Item item = info.buildPojo();
+        Integer userId = (Integer)request.getAttribute("userId");
+        Date now = new Date();
+        item.setUpdateTime(now)
+            .setUpdateUser(userId);
+        return itemMapper.updateById(item);
     }
 
     /**
