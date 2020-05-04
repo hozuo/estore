@@ -1,5 +1,6 @@
 package top.ericson.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +85,12 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Integer create(ItemInfo info) {
         Item item = info.buildPojo();
+        Integer userId = (Integer)request.getAttribute("userId");
+        Date now = new Date();
+        item.setCreateTime(now)
+            .setCreateUser(userId)
+            .setUpdateTime(now)
+            .setUpdateUser(userId);
         return itemMapper.insert(item);
     }
 
@@ -139,8 +146,8 @@ public class ItemServiceImpl implements ItemService {
         List<Item> list = itemMapper.selectNamesById(idSet);
         Map<Integer, String> nameMap = new HashMap<Integer, String>();
         for (Item item : list) {
-            if (item != null && item.getName() != null) {
-                nameMap.put(item.getItemId(), item.getName());
+            if (item != null && item.getItemName() != null) {
+                nameMap.put(item.getItemId(), item.getItemName());
             }
         }
         return nameMap;

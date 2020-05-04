@@ -1,6 +1,7 @@
 package top.ericson.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,11 +14,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Item;
+import top.ericson.service.CatService;
 import top.ericson.service.ItemService;
+import top.ericson.service.UserFeignService;
 import top.ericson.vo.JsonResult;
+import top.ericson.vo.PageObject;
 import top.ericson.vo.PageQuery;
 import top.ericson.vo.ResultCode;
 import top.ericson.vo.info.ItemInfo;
@@ -35,6 +42,12 @@ public class ItemController {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private CatService catService;
+
+    @Autowired
+    private UserFeignService userService;
 
     /**
      * @author Ericson
@@ -82,7 +95,7 @@ public class ItemController {
         if (id == null || id == 0 || itemInfo == null) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
         }
-        itemInfo.setId(id);
+        itemInfo.setItemId(id);
         Integer updateNum = itemService.update(itemInfo);
         if (updateNum == 1) {
             return JsonResult.success("成功更新1条数据");
@@ -123,7 +136,7 @@ public class ItemController {
         if (item == null) {
             return JsonResult.msg("找不到商品");
         } else {
-            return JsonResult.success(item.getName());
+            return JsonResult.success(item.getItemName());
         }
     }
 
@@ -140,7 +153,43 @@ public class ItemController {
      */
     @GetMapping("/items")
     public JsonResult findByPage(PageQuery pageQuery) {
-        return JsonResult.success(itemService.findPage(pageQuery));
+        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        String orderBy = ItemInfo.orderByCheak(pageQuery.getOrderBy());
+        if (orderBy != null) {
+            pageQuery.setOrderBy(orderBy);
+        }
+        IPage<Item> iPage = itemService.findPage(pageQuery);
+        // 获得list
+        List<Item> itemList = iPage.getRecords();
+        if (itemList == null) {
+            return JsonResult.fail();
+        }
+        /*
+         * 构造联合查询请求集合
+         */
+        Set<Integer> userIdSet = new HashSet<>();
+        Set<Integer> catIdSet = new HashSet<>();
+        for (Item item : itemList) {
+            catIdSet.add(item.getCatId());
+            userIdSet.add(item.getUpdateUser());
+            userIdSet.add(item.getCreateUser());
+        }
+        /*查询用户*/
+        JsonResult usersNameJson = userService.findUsersNameById(userIdSet);
+        @SuppressWarnings("unchecked")
+        Map<String, String> usernameMap = (Map<String, String>)usersNameJson.getData();
+        log.debug("usernameMap:{}", usernameMap);
+
+        /*查询分类*/
+        Map<Integer, String> catNameMap = catService.findNamesById(catIdSet);
+        log.debug("catNameMap:{}", catNameMap);
+
+        /*注入值*/
+        List<ItemInfo> itemInfoList = ItemInfo.buildInfoList(itemList, usernameMap, catNameMap);
+
+        PageObject<ItemInfo> pageObject = new PageObject<ItemInfo>(iPage, itemInfoList);
+
+        return JsonResult.success(pageObject);
     }
 
     @GetMapping("/items/search")

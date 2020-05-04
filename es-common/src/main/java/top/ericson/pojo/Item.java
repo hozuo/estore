@@ -21,15 +21,11 @@ public class Item extends BasePojo {
     @TableId(type = IdType.AUTO)
     private Integer itemId;
 
-    private String name;
+    private String itemName;
 
     private String itemSn;
 
     private Integer catId;
-
-    private Integer specId;
-
-    private Integer unitId;
 
     private Long buyPrice;
 
