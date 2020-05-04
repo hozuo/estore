@@ -7,13 +7,13 @@
     <sql id="queryWhereName">
         <where>
             <if test="name!=null and name!=''">
-                name like concat("%",#{name},"%")
+                item_name like concat("%",#{name},"%")
             </if>
         </where>
     </sql>
 
     <select id="selectNamesById" resultType="Item">
-        SELECT item_id,name
+        SELECT item_id,item_name
         FROM es_item
         <where>
             <if test="collection != null and collection">
@@ -27,7 +27,7 @@
     </select>
 
     <select id="selectNameById" resultType="String">
-        SELECT name
+        SELECT item_name
         FROM es_item
         WHERE id = #{id}
     </select>

@@ -196,6 +196,7 @@ public class InstockController {
         @RequestParam(value = "item", required = false) Set<Integer> itemIdQuerySet, PageQuery pageQuery) {
 
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        
         /*
          * 数据校验
          * TODO:orderBy和orderType是直接注入,要做防注入校验
