@@ -168,10 +168,6 @@ public class StoreController {
     @GetMapping("/stores")
     public JsonResult findByPage(PageQuery pageQuery) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
-        // 判断orderBy是否合法
-        if (!pageQuery.cheak(new StoreInfo().getClass())) {
-            return JsonResult.build(ResultCode.PARAMS_ERROR);
-        }
         // 分页查询
         IPage<Store> iPage = storeService.findPage(pageQuery);
         if (iPage == null) {

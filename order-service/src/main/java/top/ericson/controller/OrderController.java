@@ -33,7 +33,6 @@ import top.ericson.vo.JsonResult;
 import top.ericson.vo.PageObject;
 import top.ericson.vo.PageQuery;
 import top.ericson.vo.ResultCode;
-import top.ericson.vo.info.StoreInfo;
 import top.ericson.vo.info.OrderInfo;
 import top.ericson.vo.info.OrderItemKeyInfo;
 
@@ -193,10 +192,6 @@ public class OrderController {
     @GetMapping("/orders")
     public JsonResult findByPage(PageQuery pageQuery) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
-        // 判断orderBy是否合法
-        if (!pageQuery.cheak(new StoreInfo().getClass())) {
-            return JsonResult.build(ResultCode.PARAMS_ERROR);
-        }
         // 分页查询
         IPage<Order> iPage = orderService.findPage(pageQuery);
         if (iPage == null) {

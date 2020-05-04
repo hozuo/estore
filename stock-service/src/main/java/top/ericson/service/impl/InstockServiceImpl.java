@@ -139,7 +139,7 @@ public class InstockServiceImpl implements InstockService {
         QueryWrapper<Instock> queryWrapper = new QueryWrapper<>();
         // 名称查询
         if (pageQuery.getName() != null) {
-            queryWrapper.like("name", pageQuery.getName());
+            queryWrapper.like("in_sn", pageQuery.getName());
         }
         // 排序
         if (pageQuery.getOrderBy() != null) {

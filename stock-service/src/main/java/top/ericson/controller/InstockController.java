@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -19,11 +18,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Instock;
-import top.ericson.pojo.Item;
 import top.ericson.service.InstockService;
 import top.ericson.service.DataFeignService;
 import top.ericson.service.UserFeignService;
 import top.ericson.vo.JsonResult;
+import top.ericson.vo.PageObject;
 import top.ericson.vo.PageQuery;
 import top.ericson.vo.ResultCode;
 import top.ericson.vo.info.InstockInfo;
@@ -59,17 +58,10 @@ public class InstockController {
     public JsonResult create(InstockInfo instockInfo) {
         log.debug("instockInfo:{}", instockInfo);
         /*TODO 数据校验*/
-        if (instockInfo == null || !instockInfo.cheak()) {
-            return JsonResult.build(ResultCode.PARAMS_ERROR);
-        }
 
         /*校验商品*/
         // 使线程可见,拦截器可以获得请求头中的token
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
-        JsonResult itemJson = dataService.findItemById(instockInfo.getItemId());
-        if (Integer.parseInt(itemJson.getStatus()) != 200) {
-            return JsonResult.msg("商品校验失败");
-        }
 
         /*TODO 校验仓库*/
 
@@ -190,19 +182,14 @@ public class InstockController {
      * @return JsonResult
      * @description 很牛逼的多字段联合分页查询
      */
-    @GetMapping("/instocks/search")
+    @GetMapping("/instocks")
     @SuppressWarnings("unchecked")
-    public JsonResult search(@RequestParam(value = "id", required = false) Set<Integer> inIdQuerySet,
-        @RequestParam(value = "item", required = false) Set<Integer> itemIdQuerySet, PageQuery pageQuery) {
+    public JsonResult search(PageQuery pageQuery) {
 
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         
-        /*
-         * 数据校验
-         * TODO:orderBy和orderType是直接注入,要做防注入校验
-         */
-        pageQuery.cheak(new Item().getClass());
-
+        /*TODO 入库流水排序搜索*/
+        
         /*
          * 查询入库流水
          */
@@ -244,8 +231,9 @@ public class InstockController {
         /*注入值*/
         List<InstockInfo> instockInfoList = InstockInfo.buildInfoList(instockList, usernameMap ,itemsNameMap, storesNameMap);
         
-        // TODO 返回值
-        return JsonResult.success(instockInfoList);
+        PageObject<InstockInfo> pageObject = new PageObject<InstockInfo>(iPage, instockInfoList);
+        
+        return JsonResult.success(pageObject);
     }
 
 }
