@@ -207,4 +207,16 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectById(userId);
     }
 
+    /**
+     * @author Ericson
+     * @date 2020/05/04 16:57
+     * @return
+     * @see top.ericson.service.UserService#findAll()
+     * @description 
+     */
+    @Override
+    public List<User> findAll() {
+        return userMapper.selectList(null);
+    }
+
 }

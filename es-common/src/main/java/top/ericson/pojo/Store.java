@@ -26,7 +26,7 @@ public class Store extends BasePojo{
     @TableId(type = IdType.AUTO)
     private Integer storeId;
 
-    private String name;
+    private String storeName;
 
     private String storeSn;
 

@@ -25,9 +25,9 @@ public class StoreInfo extends BaseInfo {
 
     private static final long serialVersionUID = 6925026774463466605L;
 
-    private Integer id;
+    private Integer storeId;
 
-    private String name;
+    private String storeName;
 
     private String sn;
 
@@ -44,8 +44,8 @@ public class StoreInfo extends BaseInfo {
      * @description 将pojo对象中的非ID变量赋给info
      */
     public StoreInfo(Store store) {
-        id = store.getStoreId();
-        name = store.getName();
+        storeId = store.getStoreId();
+        storeName = store.getStoreName();
         sn = store.getStoreSn();
         addr = store.getAddress();
         managerId = store.getManager();
@@ -56,8 +56,8 @@ public class StoreInfo extends BaseInfo {
     }
 
     public StoreInfo(Store store, Map<String, String> usernameMap) {
-        id = store.getStoreId();
-        name = store.getName();
+        storeId = store.getStoreId();
+        storeName = store.getStoreName();
         sn = store.getStoreSn();
         addr = store.getAddress();
         managerId = store.getManager();
@@ -77,14 +77,14 @@ public class StoreInfo extends BaseInfo {
      * @description 判断主要参数是否非空
      */
     public boolean cheak() {
-        boolean cheakNullflag = (name != null && sn != null && addr != null && managerId != null);
+        boolean cheakNullflag = (storeName != null && sn != null && addr != null && managerId != null);
         return cheakNullflag;
     }
 
     public Store buildPojo() {
         Store store = new Store();
-        store.setStoreId(id)
-            .setName(name)
+        store.setStoreId(storeId)
+            .setStoreName(storeName)
             .setStoreSn(sn)
             .setAddress(addr)
             .setManager(managerId);

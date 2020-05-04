@@ -7,7 +7,7 @@
     <sql id="queryWhereName">
         <where>
             <if test="name!=null and name!=''">
-                name like concat("%",#{name},"%")
+                store_name like concat("%",#{name},"%")
             </if>
         </where>
     </sql>
@@ -19,15 +19,9 @@
         ORDER BY ${orderBy} ${orderType}
         LIMIT #{start}, #{rows}
     </select>
-
-    <select id="getRowCount" resultType="int">
-        select count(*)
-        from es_store
-        <include refid="queryWhereName"/>
-    </select>
     
     <select id="selectStoresNameById" resultType="Store">
-        SELECT store_id,name
+        SELECT store_id,store_name
         FROM es_store
         <where>
             <if test="collection != null and collection">
@@ -41,7 +35,7 @@
     </select>
     
     <select id="selectStoreNameById" resultType="String">
-        SELECT name
+        SELECT store_name
         FROM es_store
         WHERE store_id = #{id}
     </select>

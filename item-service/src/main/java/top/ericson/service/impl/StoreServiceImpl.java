@@ -1,9 +1,12 @@
 package top.ericson.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,9 @@ public class StoreServiceImpl implements StoreService {
 
     @Autowired
     StoreMapper storeMapper;
+    
+    @Autowired
+    HttpServletRequest request;
 
     /**
      * @author Ericson
@@ -56,7 +62,7 @@ public class StoreServiceImpl implements StoreService {
         QueryWrapper<Store> queryWrapper = new QueryWrapper<>();
         // 名称查询
         if (pageQuery.getName() != null) {
-            queryWrapper.like("name", pageQuery.getName());
+            queryWrapper.like("store_name", pageQuery.getName());
         }
         // 排序
         if (pageQuery.getOrderBy() != null) {
@@ -79,6 +85,13 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public Integer insert(StoreInfo storeInfo) {
         Store store = storeInfo.buildPojo();
+        Integer userId = (Integer)request.getAttribute("userId");
+        log.debug("userId:{}", userId);
+        Date now = new Date();
+        store.setCreateTime(now)
+            .setCreateUser(userId)
+            .setUpdateTime(now)
+            .setUpdateUser(userId);
         return storeMapper.insert(store);
     }
 
@@ -134,7 +147,7 @@ public class StoreServiceImpl implements StoreService {
         List<Store> storeList = storeMapper.selectStoresNameById(idSet);
         Map<Integer, String> nameMap=new HashMap<>();
         for (Store store : storeList) {
-            nameMap.put(store.getStoreId(), store.getName());
+            nameMap.put(store.getStoreId(), store.getStoreName());
         }
         return nameMap;
     }

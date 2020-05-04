@@ -103,7 +103,7 @@ public class UserInfo extends BaseInfo {
         User user = new User();
         user.setRoleId(roleId)
             .setPassword(password)
-            .setSalt(salt)
+            .setSalt("")
             .setUsername(username)
             .setEmail(email)
             .setPhone(phone)

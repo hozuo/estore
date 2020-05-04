@@ -19,14 +19,6 @@ import top.ericson.pojo.Store;
 @Mapper
 public interface StoreMapper extends BaseMapper<Store> {
 
-    /**
-     * @author Ericson
-     * @date 2020/04/16 19:40
-     * @param name
-     * @return
-     * @description
-     */
-    int getRowCount(String name);
 
     /**
      * @author Ericson

@@ -19,8 +19,6 @@ public class User extends BasePojo {
     @TableId(type = IdType.AUTO)
     private Integer userId;
 
-    private Integer empId;
-
     private Integer roleId;
 
     private String username;

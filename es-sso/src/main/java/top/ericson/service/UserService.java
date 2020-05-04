@@ -1,5 +1,6 @@
 package top.ericson.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,5 +102,7 @@ public interface UserService {
     Integer updateValidById(User user);
     
     User findById(Integer userId);
+    
+    List<User> findAll();
 
 }

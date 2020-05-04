@@ -98,7 +98,7 @@ public class StoreController {
         if (id == 0 || storeInfo == null) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
         }
-        storeInfo.setId(id);
+        storeInfo.setStoreId(id);
         Integer updateNum = storeService.update(storeInfo);
         if (updateNum == 1) {
             return JsonResult.success("成功更新1条记录");

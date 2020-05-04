@@ -213,10 +213,18 @@ public class UserController {
      * @description 查询很多user的name
      */
     @GetMapping("/users/search/name")
-    public JsonResult findUsersNameById(@RequestParam(value = "id") Set<Integer> idSet) {
+    public JsonResult findUsersNameById(@RequestParam(value = "id",required = false) Set<Integer> idSet) {
+        // null代表全查询
+        if (idSet == null) {
+            List<User> findAll = userService.findAll();
+            idSet = new HashSet<>();
+            for (User user : findAll) {
+                idSet.add(user.getUserId());
+            }
+        }
         log.debug("set:{}", idSet);
-        Map<Integer, String> itemsNameMap = userService.findNamesById(idSet);
-        return JsonResult.success(itemsNameMap);
+        Map<Integer, String> userNameMap = userService.findNamesById(idSet);
+        return JsonResult.success(userNameMap);
     }
 
     /**

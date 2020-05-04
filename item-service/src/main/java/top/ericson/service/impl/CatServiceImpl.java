@@ -54,7 +54,6 @@ public class CatServiceImpl implements CatService {
             .setCreateUser(userId)
             .setUpdateTime(now)
             .setUpdateUser(userId);
-        catMapper.insert(cat);
         return catMapper.insert(cat);
     }
 
@@ -81,7 +80,14 @@ public class CatServiceImpl implements CatService {
      */
     @Override
     public Integer update(CatInfo catInfo) {
-        return catMapper.updateById(catInfo.buildPojo());
+        Cat cat = catInfo.buildPojo();
+        Integer userId = (Integer)request.getAttribute("userId");
+        Date now = new Date();
+        cat.setCreateTime(now)
+            .setCreateUser(userId)
+            .setUpdateTime(now)
+            .setUpdateUser(userId);
+        return catMapper.updateById(cat);
     }
 
     /**
