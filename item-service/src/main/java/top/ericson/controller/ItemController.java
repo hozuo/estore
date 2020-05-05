@@ -52,13 +52,12 @@ public class ItemController {
 
     @Autowired
     private StoreService storeService;
-    
+
     @Autowired
     private UserFeignService userService;
 
     @Autowired
     private StockFeignService stockService;
-    
 
     /**
      * @author Ericson
@@ -248,12 +247,20 @@ public class ItemController {
         // data:Map<Integer商品, ArrayList<Stock>多仓库存>
         LinkedHashMap<String, ArrayList<LinkedHashMap>> stockMap =
             (LinkedHashMap<String, ArrayList<LinkedHashMap>>)stockJson.getData();
+
+        Set<Integer> idSet = new HashSet<>();
+        for (int i = 1; i <= 100; i++) {
+            idSet.add(i);
+        }
+        Map<Integer, String> nameMap = storeService.findNamesById(idSet);
+
         List<ItemStockInfo> itemStockInfoList = new ArrayList<>();
         for (Item item : itemList) {
             // 这个商品对应的多仓库存
-            itemStockInfoList = ItemStockInfo.buildItemStockInfoList(item, stockMap.get(item.getItemId().toString()),storeService.findNameById(item.getItemId()), itemStockInfoList);
+            itemStockInfoList = ItemStockInfo.buildItemStockInfoList(item, stockMap.get(item.getItemId()
+                .toString()), nameMap, itemStockInfoList);
         }
-        
+
         PageObject<ItemStockInfo> pageObject = new PageObject<ItemStockInfo>(iPage, itemStockInfoList);
 
         /*注入值*/

@@ -62,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
         QueryWrapper<Item> queryWrapper = new QueryWrapper<>();
         // 名称查询
         if (pageQuery.getName() != null) {
-            queryWrapper.like("name", pageQuery.getName());
+            queryWrapper.like("item_name", pageQuery.getName());
         }
         // 排序
         if (pageQuery.getOrderBy() != null) {

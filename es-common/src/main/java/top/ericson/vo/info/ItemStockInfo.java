@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,12 +31,14 @@ public class ItemStockInfo implements Serializable {
      * @description 
      */
     @SuppressWarnings("rawtypes")
-    public static List<ItemStockInfo> buildItemStockInfoList(Item item, ArrayList<LinkedHashMap> stockList,String storeName,
-        List<ItemStockInfo> infoList) {
+    public static List<ItemStockInfo> buildItemStockInfoList(Item item, ArrayList<LinkedHashMap> stockList,
+        Map<Integer, String> nameMap, List<ItemStockInfo> infoList) {
         for (LinkedHashMap stock : stockList) {
             // 在infoList中添加一条全纪录
             infoList.add(new ItemStockInfo(item.getItemId(), item.getItemName(), stock.get("storeId"),
-                storeName, stock.get("enterStore"), stock.get("leaveStore"), stock.get("stock")));
+                nameMap.get(Integer.parseInt(stock.get("storeId")
+                    .toString())),
+                stock.get("enterStore"), stock.get("leaveStore"), stock.get("stock")));
         }
         return infoList;
     }
