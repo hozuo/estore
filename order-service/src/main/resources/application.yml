@@ -10,7 +10,7 @@ eureka:
       
 spring:
   application:
-    name: stock-service
+    name: order-service
   datasource:
     #引入druid数据源
     type: com.alibaba.druid.pool.DruidDataSource

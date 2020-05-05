@@ -25,7 +25,7 @@ public class SupplierInfo extends BaseInfo {
 
     private static final long serialVersionUID = -2864536785247376458L;
 
-    private Integer id;
+    private Integer supId;
 
     private String name;
 
@@ -46,7 +46,7 @@ public class SupplierInfo extends BaseInfo {
      * @description 将pojo对象中的变量赋给info
      */
     public SupplierInfo(Supplier supplier) {
-        id = supplier.getSupplierId();
+        supId = supplier.getSupplierId();
         name = supplier.getName();
         address = supplier.getAddress();
         manager = supplier.getManager();
@@ -67,7 +67,7 @@ public class SupplierInfo extends BaseInfo {
      * @description 将pojo对象中的变量赋给info
      */
     public SupplierInfo(Supplier supplier, Map<String, String> usernameMap) {
-        id = supplier.getSupplierId();
+        supId = supplier.getSupplierId();
         name = supplier.getName();
         address = supplier.getAddress();
         manager = supplier.getManager();
@@ -86,11 +86,11 @@ public class SupplierInfo extends BaseInfo {
      * @author Ericson
      * @date 2020/04/20 16:07
      * @return
-     * @description 
+     * @description
      */
     public Supplier buildPojo() {
         Supplier supplier = new Supplier();
-        supplier.setSupplierId(id)
+        supplier.setSupplierId(supId)
             .setName(name)
             .setAddress(address)
             .setManager(manager)
@@ -98,20 +98,6 @@ public class SupplierInfo extends BaseInfo {
             .setFax(fax)
             .setRemark(remark);
         return supplier;
-    }
-
-    /**
-     * @author Ericson
-     * @date 2020/04/14 17:37
-     * @param this
-     * @return true代表非空可用
-     * @description 判断主要参数是否非空
-     */
-    public boolean cheak() {
-        // true:任意对象为null
-        boolean cheakNullflag =
-            name != null && address != null && manager != null && phone != null && fax != null && remark != null;
-        return cheakNullflag;
     }
 
     /**

@@ -54,9 +54,6 @@ public class SupplierController {
      */
     @PostMapping("/supplier")
     public JsonResult create(SupplierInfo supplierInfo) {
-        if (supplierInfo == null || !supplierInfo.cheak()) {
-            return JsonResult.build(ResultCode.PARAMS_ERROR);
-        }
         Integer insertNum = supplierService.create(supplierInfo);
         if (insertNum == 1) {
             return JsonResult.success("新增1条记录");
@@ -101,7 +98,7 @@ public class SupplierController {
         if (id == 0 || supplierInfo == null) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
         }
-        supplierInfo.setId(id);
+        supplierInfo.setSupId(id);
         Integer updateNum = supplierService.update(supplierInfo);
         if (updateNum == 1) {
             return JsonResult.success("成功更新1条记录");

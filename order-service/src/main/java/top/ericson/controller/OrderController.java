@@ -232,6 +232,7 @@ public class OrderController {
         return JsonResult.success(pageObject);
     }
 
+    @SuppressWarnings("unchecked")
     @GetMapping("/order/{id}/items")
     public List<Item> findItemsById(@PathVariable("id") String id) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);

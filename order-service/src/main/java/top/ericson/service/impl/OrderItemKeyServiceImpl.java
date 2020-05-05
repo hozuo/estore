@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
-import lombok.extern.slf4j.Slf4j;
 import top.ericson.mapper.OrderItemKeyMapper;
 import top.ericson.pojo.OrderItemKey;
 import top.ericson.service.OrderItemKeyService;
