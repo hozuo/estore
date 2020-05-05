@@ -115,8 +115,7 @@ public class InstockServiceImpl implements InstockService {
     @Override
     public Integer update(InstockInfo instockInfo) {
         Instock instock = new Instock(instockInfo);
-        instock.setInId(instockInfo.getId())
-            .setUpdateUser((Integer)request.getAttribute("userId"))
+        instock.setUpdateUser((Integer)request.getAttribute("userId"))
             .setUpdateTime(new Date());
         return instockMapper.updateById(instock);
     }

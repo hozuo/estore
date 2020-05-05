@@ -84,22 +84,8 @@ public class InstockController {
      */
     @PutMapping("/instock/{id}")
     public JsonResult update(@PathVariable("id") Integer inId, InstockInfo instockInfo) {
-        /*TODO 数据校验*/
-        if (inId == null || inId == 0 || instockInfo == null || !instockInfo.cheak()) {
-            return JsonResult.build(ResultCode.PARAMS_ERROR);
-        }
-
-        /*校验商品*/
         // 使线程可见,拦截器可以获得请求头中的token
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
-        JsonResult itemJson = dataService.findItemById(instockInfo.getItemId());
-        if (Integer.parseInt(itemJson.getStatus()) != 200) {
-            return JsonResult.msg("商品校验失败");
-        }
-
-        /*TODO 校验仓库*/
-
-        /*TODO 校验用户*/
 
         /*更新入库流水*/
         instockInfo.setId(inId);
