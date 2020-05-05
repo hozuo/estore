@@ -3,6 +3,7 @@ package top.ericson.service;
 import java.util.List;
 
 import top.ericson.pojo.Stock;
+import top.ericson.vo.info.InstockInfo;
 
 /**
  * @author Ericson
@@ -19,8 +20,8 @@ public interface StockService {
 
     Integer deleteByStoreId(Integer storeId);
 
-    Long enter(Long num);
+    Long enter(InstockInfo instockInfo);
 
-    Long leave(Long num);
+    Long leave(InstockInfo instockInfo);
 
 }

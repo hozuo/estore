@@ -32,7 +32,7 @@ public class Instock extends BasePojo {
 
     // 入库id
     @TableId(type = IdType.AUTO)
-    private Integer inId;
+    private Integer inId; 
     // 入库编号
     private String inSn;
     // 仓库id
@@ -59,6 +59,7 @@ public class Instock extends BasePojo {
      * @description 使用info构造pojo
      */
     public Instock(InstockInfo info) {
+        inId = info.getId();
         inSn = info.getSn();
         storeId = info.getStoreId();
         userId = info.getUserId();

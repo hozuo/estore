@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import top.ericson.mapper.StockMapper;
 import top.ericson.pojo.Stock;
 import top.ericson.service.StockService;
+import top.ericson.vo.info.InstockInfo;
 
 /**
  * @author Ericson
@@ -74,8 +75,26 @@ public class StockServiceImpl implements StockService {
      * @description 
      */
     @Override
-    public Long enter(Long num) {
-        return null;
+    public Long enter(InstockInfo instockInfo) {
+        // 搜索
+        QueryWrapper<Stock> wrapper = new QueryWrapper<>();
+        wrapper.eq("item_id", instockInfo.getItemId());
+        wrapper.eq("store_id", instockInfo.getStoreId());
+        Stock stock = stockMapper.selectOne(wrapper);
+        if (stock == null) {
+            return null;
+        }
+
+        Long enterStore = stock.getEnterStore();
+        enterStore += instockInfo.getNum();
+        stock.setEnterStore(enterStore);
+
+        Long stockNum = stock.getStock();
+        stockNum += instockInfo.getNum();
+        stock.setStock(stockNum);
+
+        stockMapper.update(stock, wrapper);
+        return stockNum;
     }
 
     /**
@@ -87,7 +106,7 @@ public class StockServiceImpl implements StockService {
      * @description 
      */
     @Override
-    public Long leave(Long num) {
+    public Long leave(InstockInfo instockInfo) {
         return null;
     }
 

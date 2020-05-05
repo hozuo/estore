@@ -1,9 +1,12 @@
 package top.ericson.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +21,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Instock;
+import top.ericson.pojo.Stock;
 import top.ericson.service.InstockService;
+import top.ericson.service.StockService;
 import top.ericson.service.DataFeignService;
 import top.ericson.service.UserFeignService;
 import top.ericson.vo.JsonResult;
@@ -41,6 +46,9 @@ public class InstockController {
     private InstockService instockService;
 
     @Autowired
+    private StockService stockService;
+
+    @Autowired
     private DataFeignService dataService;
 
     @Autowired
@@ -55,20 +63,37 @@ public class InstockController {
      */
     @PostMapping("/instock")
     public JsonResult create(InstockInfo instockInfo) {
-        log.debug("instockInfo:{}", instockInfo);
         /*TODO 数据校验*/
-
-        /*校验商品*/
         // 使线程可见,拦截器可以获得请求头中的token
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        
+        // 定义sn码
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+        String sn = "In" + sdf.format(new Date()) + UUID.randomUUID()
+            .toString()
+            .substring(0, 6);
+        instockInfo.setSn(sn);
 
-        /*TODO 校验仓库*/
+        // 定义buyId
+        if (instockInfo.getBuyId() == null) {
+            instockInfo.setBuyId("");
+        }
 
-        /*TODO 校验用户*/
+        // 定义实时库存
+        Long stockNum = 0L;
+        List<Stock> stockList = stockService.findByItemId(instockInfo.getItemId());
+        for (Stock s : stockList) {
+            stockNum = stockNum + s.getStock();
+        }
+        instockInfo.setStock(stockNum);
+
+        // 定义状态
+        instockInfo.setInState(1);
 
         /*新建入库流水*/
         Integer createNum = instockService.create(instockInfo);
         if (createNum == 1) {
+            stockService.enter(instockInfo);
             return JsonResult.success("新建一条记录");
         } else {
             return JsonResult.fail();
@@ -172,9 +197,9 @@ public class InstockController {
     public JsonResult search(PageQuery pageQuery) {
 
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
-        
+
         /*TODO 入库流水排序搜索*/
-        
+
         /*
          * 查询入库流水
          */
@@ -214,10 +239,11 @@ public class InstockController {
         Map<String, String> usernameMap = (Map<String, String>)usersNameJson.getData();
 
         /*注入值*/
-        List<InstockInfo> instockInfoList = InstockInfo.buildInfoList(instockList, usernameMap ,itemsNameMap, storesNameMap);
-        
+        List<InstockInfo> instockInfoList =
+            InstockInfo.buildInfoList(instockList, usernameMap, itemsNameMap, storesNameMap);
+
         PageObject<InstockInfo> pageObject = new PageObject<InstockInfo>(iPage, instockInfoList);
-        
+
         return JsonResult.success(pageObject);
     }
 
