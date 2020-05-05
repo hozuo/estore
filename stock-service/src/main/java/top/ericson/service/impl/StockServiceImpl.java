@@ -50,7 +50,9 @@ public class StockServiceImpl implements StockService {
      */
     @Override
     public Integer deleteByItemId(Integer itemId) {
-        return null;
+        QueryWrapper<Stock> wrapper = new QueryWrapper<>();
+        wrapper.eq("item_id", itemId);
+        return stockMapper.delete(wrapper);
     }
 
     /**
@@ -108,6 +110,22 @@ public class StockServiceImpl implements StockService {
     @Override
     public Long leave(InstockInfo instockInfo) {
         return null;
+    }
+
+    /**
+     * @author Ericson
+     * @date 2020/05/06 01:55
+     * @param itemId
+     * @return
+     * @see top.ericson.service.StockService#createByItemId(java.lang.Integer)
+     * @description 
+     */
+    @Override
+    public Integer createByItemId(Integer itemId) {
+        for (int storeId = 1; storeId <= 3; storeId++) {
+            stockMapper.insert(new Stock(itemId, storeId, 0L, 0L, 0L));
+        }
+        return 3;
     }
 
 }

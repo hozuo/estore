@@ -3,7 +3,9 @@ package top.ericson.pojo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Ericson
@@ -13,6 +15,8 @@ import lombok.Data;
  * @description 库存表
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("es_stock")
 public class Stock {
 

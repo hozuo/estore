@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -38,13 +41,29 @@ public class StockController {
 
         // 定义返回的map集合
         Map<Integer, List<Stock>> stockMap = new HashMap<Integer, List<Stock>>();
-
+        List<Stock> stockList;
         // 遍历itemId查询库存信息
         for (Integer itemId : itemIdSet) {
-            stockMap.put(itemId, stockService.findByItemId(itemId));
+            stockList = stockService.findByItemId(itemId);
+            if (stockList == null || stockList.isEmpty()) {
+                stockService.createByItemId(itemId);
+                stockList = stockService.findByItemId(itemId);
+            }
+            stockMap.put(itemId, stockList);
         }
 
         return JsonResult.success(stockMap);
     }
 
+    @PostMapping("/stock/{id}")
+    public JsonResult createStockByItemId(@PathVariable("id") Integer itemId) {
+        stockService.createByItemId(itemId);
+        return JsonResult.success();
+    }
+
+    @DeleteMapping("/stock/{id}")
+    public JsonResult deleteStockByItemId(@PathVariable("id") Integer itemId) {
+        stockService.deleteByItemId(itemId);
+        return JsonResult.success();
+    }
 }

@@ -15,6 +15,8 @@ import top.ericson.vo.info.InstockInfo;
 public interface StockService {
 
     List<Stock> findByItemId(Integer itemId);
+    
+    Integer createByItemId(Integer itemId);
 
     Integer deleteByItemId(Integer itemId);
 

@@ -68,23 +68,30 @@ public class ItemController {
      */
     @PostMapping("/item")
     public JsonResult create(ItemInfo itemInfo) {
-        return JsonResult.success(itemService.create(itemInfo));
+        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        Integer createNum = itemService.create(itemInfo);
+        if (createNum==1) {
+            return JsonResult.success();
+        }
+        return JsonResult.fail();
     }
 
     /**
      * @author Ericson
      * @date 2020/04/14 16:10
-     * @param id
+     * @param itemId
      * @return
      * @description [删除] 根据id删除商品
      */
     @DeleteMapping("/item/{id}")
-    public JsonResult deleteById(@PathVariable("id") Integer id) {
-        if (id == null || id == 0) {
+    public JsonResult deleteById(@PathVariable("id") Integer itemId) {
+        if (itemId == null || itemId == 0) {
             return JsonResult.build(ResultCode.PARAMS_ERROR);
         }
-        Integer deleteNum = itemService.deleteById(id);
+        Integer deleteNum = itemService.deleteById(itemId);
         if (deleteNum == 1) {
+            RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+            stockService.deleteStockByItemId(itemId);
             return JsonResult.success("成功删除1条数据");
         } else if (deleteNum == 0) {
             return JsonResult.msg("找不到数据");
