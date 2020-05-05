@@ -24,7 +24,6 @@ import top.ericson.service.UserFeignService;
 import top.ericson.vo.JsonResult;
 import top.ericson.vo.PageObject;
 import top.ericson.vo.PageQuery;
-import top.ericson.vo.ResultCode;
 import top.ericson.vo.info.InstockInfo;
 
 /**

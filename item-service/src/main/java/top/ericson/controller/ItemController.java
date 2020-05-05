@@ -2,6 +2,7 @@ package top.ericson.controller;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,12 +23,15 @@ import lombok.extern.slf4j.Slf4j;
 import top.ericson.pojo.Item;
 import top.ericson.service.CatService;
 import top.ericson.service.ItemService;
+import top.ericson.service.StockFeignService;
+import top.ericson.service.StoreService;
 import top.ericson.service.UserFeignService;
 import top.ericson.vo.JsonResult;
 import top.ericson.vo.PageObject;
 import top.ericson.vo.PageQuery;
 import top.ericson.vo.ResultCode;
 import top.ericson.vo.info.ItemInfo;
+import top.ericson.vo.info.ItemStockInfo;
 
 /**
  * @author Ericson
@@ -47,7 +51,14 @@ public class ItemController {
     private CatService catService;
 
     @Autowired
+    private StoreService storeService;
+    
+    @Autowired
     private UserFeignService userService;
+
+    @Autowired
+    private StockFeignService stockService;
+    
 
     /**
      * @author Ericson
@@ -209,6 +220,44 @@ public class ItemController {
         Map<Integer, String> nameMap = itemService.findNamesById(idSet);
         log.debug("nameMap:{}", nameMap);
         return JsonResult.success(nameMap);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @GetMapping("/items/search/stock")
+    public JsonResult findItemStocksById(PageQuery pageQuery) {
+        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        String orderBy = ItemInfo.orderByCheak(pageQuery.getOrderBy());
+        if (orderBy != null) {
+            pageQuery.setOrderBy(orderBy);
+        }
+        IPage<Item> iPage = itemService.findPage(pageQuery);
+        // 获得list
+        List<Item> itemList = iPage.getRecords();
+        if (itemList == null) {
+            return JsonResult.fail();
+        }
+        /*
+         * 构造联合查询请求集合
+         */
+        Set<Integer> itemIdSet = new HashSet<>();
+        for (Item item : itemList) {
+            itemIdSet.add(item.getItemId());
+        }
+
+        JsonResult stockJson = stockService.searchByItemIds(itemIdSet);
+        // data:Map<Integer商品, ArrayList<Stock>多仓库存>
+        LinkedHashMap<String, ArrayList<LinkedHashMap>> stockMap =
+            (LinkedHashMap<String, ArrayList<LinkedHashMap>>)stockJson.getData();
+        List<ItemStockInfo> itemStockInfoList = new ArrayList<>();
+        for (Item item : itemList) {
+            // 这个商品对应的多仓库存
+            itemStockInfoList = ItemStockInfo.buildItemStockInfoList(item, stockMap.get(item.getItemId().toString()),storeService.findNameById(item.getItemId()), itemStockInfoList);
+        }
+        
+        PageObject<ItemStockInfo> pageObject = new PageObject<ItemStockInfo>(iPage, itemStockInfoList);
+
+        /*注入值*/
+        return JsonResult.success(pageObject);
     }
 
 }

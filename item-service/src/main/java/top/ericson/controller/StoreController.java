@@ -207,10 +207,6 @@ public class StoreController {
     @GetMapping("/stores/search/name")
     public JsonResult findStoresNameById(@RequestParam("id") Set<Integer> idSet) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
-        if (idSet == null || idSet.size() == 0) {
-            return JsonResult.build(ResultCode.PARAMS_ERROR);
-        }
-        log.debug("idSet:{}", idSet);
         Map<Integer, String> nameMap = new LinkedHashMap<Integer, String>();
         nameMap = storeService.findNamesById(idSet);
         log.debug("nameMap:{}", nameMap);

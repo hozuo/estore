@@ -64,4 +64,5 @@ public interface DataFeignService {
     
     @GetMapping("/suppliers/search/name")
     public JsonResult findSuppliersNameById(@RequestParam("id") Set<Integer> idSet);
+    
 }
