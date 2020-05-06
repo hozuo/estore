@@ -1,5 +1,9 @@
 package top.ericson.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,31 +71,40 @@ public class OrderController {
      * @description [新增]
      */
     @PostMapping("/order")
-    public JsonResult create(OrderInfo orderInfo, @RequestParam(value = "list") String keyInfoList) {
-        String uuid = UUID.randomUUID()
+    public JsonResult create(OrderInfo orderInfo, @RequestParam(value = "orderItems") String keyInfoList) {
+        String orderId = UUID.randomUUID()
             .toString()
-            .replaceAll("-", "");
-        orderInfo.setId(uuid);
+            .replaceAll("-", "")
+            .substring(0, 18);
+        orderInfo.setId(orderId);
+        orderInfo.setDeptId(0);
+        orderInfo.setState(1);
+        // 定义sn码
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+        String sn = "In" + sdf.format(new Date()) + UUID.randomUUID()
+            .toString()
+            .substring(0, 6);
+        orderInfo.setSn(sn);
+
         log.debug("orderInfo:{}", orderInfo);
         log.debug("keyInfoList:{}", keyInfoList);
         ObjectMapper mapper = new ObjectMapper();
-            List<OrderItemKeyInfo> readValue;
-            try {
-                readValue = mapper.readValue("[" + keyInfoList + "]", new TypeReference<List<OrderItemKeyInfo>>() {});
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                return JsonResult.msg("JSON转换失败");
-            }
-            log.debug("readValue:{}", readValue);
-            for (OrderItemKeyInfo key : readValue) {
-                orderItemKeyService.create(key);
-            }
+        List<OrderItemKeyInfo> readValue;
+        try {
+            readValue = mapper.readValue("[" + keyInfoList + "]", new TypeReference<List<OrderItemKeyInfo>>() {});
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return JsonResult.msg("JSON转换失败");
+        }
+        log.debug("readValue:{}", readValue);
+        for (OrderItemKeyInfo key : readValue) {
+            key.setOrderId(orderId);
+            orderItemKeyService.create(key);
+        }
         Integer insertNum = orderService.create(orderInfo);
 
         if (insertNum == 1) {
             return JsonResult.success("新增1条记录");
-        } else if (insertNum == 0) {
-            return JsonResult.msg("新增0条记录");
         } else {
             return JsonResult.fail();
         }
@@ -234,7 +247,7 @@ public class OrderController {
 
     @SuppressWarnings("unchecked")
     @GetMapping("/order/{id}/items")
-    public List<Item> findItemsById(@PathVariable("id") String id) {
+    public JsonResult findItemsById(@PathVariable("id") String id) {
         RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         List<OrderItemKey> findByOrderId = orderItemKeyService.findByOrderId(id);
         log.debug("findByOrderId:{}", findByOrderId);
@@ -242,9 +255,38 @@ public class OrderController {
         for (OrderItemKey key : findByOrderId) {
             idSet.add(key.getItemId());
         }
-        JsonResult itemsJson = dataService.searchItems(idSet);
-        List<Item> itemList = (List<Item>)itemsJson.getData();
-        return itemList;
+        JsonResult itemsJson = dataService.findItemsNameById(idSet);
+        Map<String, String> nameMap = (Map<String, String>)itemsJson.getData();
+
+        // 包装对象
+        Map<String, String> itemNameNumMap;
+        List<Map<String, String>> list = new ArrayList<>();
+        for (OrderItemKey key : findByOrderId) {
+            itemNameNumMap = new HashMap<String, String>();
+            itemNameNumMap.put("id", key.getItemId()
+                .toString());
+            itemNameNumMap.put("name", nameMap.get(key.getItemId()
+                .toString()));
+            itemNameNumMap.put("num", key.getNum()
+                .toString());
+            list.add(itemNameNumMap);
+        }
+        return JsonResult.success(list);
+    }
+
+    @GetMapping("/order/{id}/itemids")
+    public JsonResult findItemIdsById(@PathVariable("id") String orderId) {
+        List<OrderItemKey> findByOrderId = orderItemKeyService.findByOrderId(orderId);
+        List<Integer> idList = new ArrayList<Integer>();
+        for (OrderItemKey orderItemKey : findByOrderId) {
+            idList.add(orderItemKey.getItemId());
+        }
+        return JsonResult.success(idList);
+    }
+
+    @GetMapping("/order/{id}/itemkey")
+    public JsonResult findItemKeysById(@PathVariable("id") String orderId) {
+        return JsonResult.success(orderItemKeyService.findByOrderId(orderId));
     }
 
 }

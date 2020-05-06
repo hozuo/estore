@@ -37,7 +37,6 @@ public class loginFilter implements Filter {
         log.debug("loginFilter.doFilter()");
         HttpServletResponse response = (HttpServletResponse)servletResponse;
         HttpServletRequest request = (HttpServletRequest)servletRequest;
-
         String path = request.getRequestURI()
             .substring(request.getContextPath()
                 .length())

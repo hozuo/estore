@@ -120,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
         QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
         // 名称查询
         if (pageQuery.getName() != null) {
-            queryWrapper.like("name", pageQuery.getName());
+            queryWrapper.like("order_sn", pageQuery.getName());
         }
         // 排序
         if (pageQuery.getOrderBy() != null) {

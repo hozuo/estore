@@ -46,6 +46,8 @@ public class OrderInfo extends BaseInfo {
     private String storeStr;
 
     private Integer state;
+    
+//    private List<OrderItemKeyInfo> orderItems;
 
     /**
      * @date 2020/04/20
