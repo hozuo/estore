@@ -68,7 +68,7 @@ public class ItemController {
      */
     @PostMapping("/item")
     public JsonResult create(ItemInfo itemInfo) {
-        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        
         Integer createNum = itemService.create(itemInfo);
         if (createNum==1) {
             return JsonResult.success();
@@ -90,7 +90,7 @@ public class ItemController {
         }
         Integer deleteNum = itemService.deleteById(itemId);
         if (deleteNum == 1) {
-            RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+            
             stockService.deleteStockByItemId(itemId);
             return JsonResult.success("成功删除1条数据");
         } else if (deleteNum == 0) {
@@ -170,7 +170,7 @@ public class ItemController {
      */
     @GetMapping("/items")
     public JsonResult findByPage(PageQuery pageQuery) {
-        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        
         String orderBy = ItemInfo.orderByCheak(pageQuery.getOrderBy());
         if (orderBy != null) {
             pageQuery.setOrderBy(orderBy);
@@ -231,7 +231,7 @@ public class ItemController {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @GetMapping("/items/search/stock")
     public JsonResult findItemStocksById(PageQuery pageQuery) {
-        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
+        
         String orderBy = ItemInfo.orderByCheak(pageQuery.getOrderBy());
         if (orderBy != null) {
             pageQuery.setOrderBy(orderBy);

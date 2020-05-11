@@ -1,47 +1,43 @@
 package top.ericson.service;
 
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
-@Configuration
+@Slf4j
+@Component
 public class FeignTokenHeaderRequestInterceptor implements RequestInterceptor {
-    
     @Override
-    public void apply(RequestTemplate template) {
-        Map<String,String> headers = getHeaders(getHttpServletRequest());
-        for(String headerName : headers.keySet()){
-            template.header(headerName, getHeaders(getHttpServletRequest()).get(headerName));
-        }
-    }
-    
-    private HttpServletRequest getHttpServletRequest() {
-        try {
-            return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        } catch (Exception e) {
-            System.out.println("FeignTokenHeaderRequestInterceptor.getHttpServletRequest()");
-            e.printStackTrace();
-            return null;
-        }
-    }
+    public void apply(RequestTemplate requestTemplate) {
 
-    private Map<String, String> getHeaders(HttpServletRequest request) {
-        Map<String, String> map = new LinkedHashMap<>();
-        Enumeration<String> enumeration = request.getHeaderNames();
-        while (enumeration.hasMoreElements()) {
-            String key = enumeration.nextElement();
-            String value = request.getHeader(key);
-            map.put(key, value);
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+
+        if (requestAttributes != null) {
+            HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
+
+            if (request != null) {
+                Enumeration<String> headerNames = request.getHeaderNames();
+                if (headerNames != null) {
+                    while (headerNames.hasMoreElements()) {
+                        String headerName = headerNames.nextElement();
+                        log.debug("headerName:{}", headerName);
+                        if (headerName.equals("token")) {
+                            
+                            String headerValue = request.getHeader(headerName);
+                            log.debug("headerValue:{}", headerValue);
+                            requestTemplate.header(headerName, headerValue);
+                        }
+                    }
+                }
+            }
         }
-        return map;
     }
 }
