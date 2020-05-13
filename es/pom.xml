@@ -11,18 +11,17 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.6.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <modules>
         <module>es-common</module>
-        <module>es-order</module>
-        <module>stock-service</module>
         <module>es-eureka</module>
-        <module>es_swagger</module>
+        <module>es-swagger</module>
         <module>es-zull</module>
-        <module>item-service</module>
         <module>es-sso</module>
+        <module>stock-service</module>
+        <module>item-service</module>
         <module>order-service</module>
     </modules>
 

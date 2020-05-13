@@ -5,5 +5,5 @@
     <artifactId>es</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>es_swagger</artifactId>
+  <artifactId>es-swagger</artifactId>
 </project>
