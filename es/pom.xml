@@ -21,7 +21,7 @@
         <module>es-zull</module>
         <module>es-sso</module>
         <module>stock-service</module>
-        <module>item-service</module>
+        <module>data-service</module>
         <module>order-service</module>
     </modules>
 

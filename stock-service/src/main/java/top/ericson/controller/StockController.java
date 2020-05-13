@@ -37,8 +37,6 @@ public class StockController {
 
     @GetMapping("/stock/searchByItemIds")
     public JsonResult searchByItemIds(@RequestParam(value = "id") Set<Integer> itemIdSet) {
-        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
-
         // 定义返回的map集合
         Map<Integer, List<Stock>> stockMap = new HashMap<Integer, List<Stock>>();
         List<Stock> stockList;

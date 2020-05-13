@@ -64,8 +64,6 @@ public class InstockController {
     @PostMapping("/instock")
     public JsonResult create(InstockInfo instockInfo) {
         /*TODO 数据校验*/
-        // 使线程可见,拦截器可以获得请求头中的token
-        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         
         // 定义sn码
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
