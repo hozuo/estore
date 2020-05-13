@@ -26,7 +26,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import top.ericson.pojo.Item;
 import top.ericson.pojo.Order;
 import top.ericson.pojo.OrderItemKey;
 import top.ericson.service.DataFeignService;
