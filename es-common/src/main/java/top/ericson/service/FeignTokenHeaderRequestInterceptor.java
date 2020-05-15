@@ -12,6 +12,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 
+/**
+ * @author Ericson
+ * @class FeignTokenHeaderRequestInterceptor
+ * @date 2020/05/14 20:58
+ * @version 1.0
+ * @description 用于在feign请求发送时转发token，需要自定义隔离策略
+ */
 @Slf4j
 @Component
 public class FeignTokenHeaderRequestInterceptor implements RequestInterceptor {

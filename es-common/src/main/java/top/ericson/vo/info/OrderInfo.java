@@ -156,7 +156,6 @@ public class OrderInfo extends BaseInfo {
                         .toString()));
             }
             if (deptNameMap != null) {
-                // TODO
                 info.setDeptStr(deptNameMap.get(info.getDeptId()
                     .toString()));
             }

@@ -86,15 +86,15 @@ public class StockServiceImpl implements StockService {
         if (stock == null) {
             return null;
         }
-
+        // 入库总量增加
         Long enterStore = stock.getEnterStore();
         enterStore += instockInfo.getNum();
         stock.setEnterStore(enterStore);
-
+        // 实时库存增加
         Long stockNum = stock.getStock();
         stockNum += instockInfo.getNum();
         stock.setStock(stockNum);
-
+        // 更新库存
         stockMapper.update(stock, wrapper);
         return stockNum;
     }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.databind.util.JSONPObject;
@@ -236,7 +235,6 @@ public class UserController {
      */
     @GetMapping("/users")
     public JsonResult findPage(PageQuery pageQuery) {
-        RequestContextHolder.setRequestAttributes(RequestContextHolder.getRequestAttributes(), true);
         // 判断orderBy是否合法
         pageQuery.setOrderBy(UserInfo.orderByCheak(pageQuery.getOrderBy()));
         // 分页查询
