@@ -227,6 +227,13 @@ public class ItemController {
         return JsonResult.success(nameMap);
     }
 
+    /**
+     * @author Ericson
+     * @date 2020/05/15 15:55
+     * @param pageQuery
+     * @return
+     * @description 查询库存的方法，返回值是可以直接展示的名称，内部封装了二次查询
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     @GetMapping("/items/search/stock")
     public JsonResult findItemStocksById(PageQuery pageQuery) {
@@ -235,8 +242,9 @@ public class ItemController {
         if (orderBy != null) {
             pageQuery.setOrderBy(orderBy);
         }
+        // 分页查询
         IPage<Item> iPage = itemService.findPage(pageQuery);
-        // 获得list
+        // 获得商品list
         List<Item> itemList = iPage.getRecords();
         if (itemList == null) {
             return JsonResult.fail();
